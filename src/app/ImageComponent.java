@@ -1,5 +1,9 @@
 package app;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -7,6 +11,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class ImageComponent extends JLabel
 {
@@ -18,7 +23,7 @@ public class ImageComponent extends JLabel
 
     ImageComponent(File file)
     {
-        super();
+        super(file.getName());
         hitboxes = new ArrayList<Box>();
         hurtboxes = new ArrayList<Box>();
 
@@ -29,10 +34,13 @@ public class ImageComponent extends JLabel
         catch(Exception e)
         {
             e.printStackTrace();
-            App.handleError();
+            MainWindow.handleError();
         }
         this.setIcon(new ImageIcon(read));
         this.setName(file.getName());
+        //setHorizontalAlignment(JLabel.CENTER);
+        setVerticalAlignment(JLabel.BOTTOM);
+        setBorder(BorderFactory.createLineBorder(Color.black));
     }
 
     public void addHitbox(Box b)
