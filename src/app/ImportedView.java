@@ -2,6 +2,7 @@ package app;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +23,10 @@ class ImportedView extends JScrollPane
     {
         super();
         images = new HashMap<String, ImageComponent>();
-        //setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
+        setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         panel = new JPanel(true);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setPreferredSize(new Dimension(1999, 1999));
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
+        panel.setPreferredSize(new Dimension(500, 1000));
         getViewport().add(panel);
         
     }
