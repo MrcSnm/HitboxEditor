@@ -2,16 +2,12 @@ package app;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ImageComponent extends JLabel
 {
-    private BufferedImage read;
     public List<Box> hitboxes;
     public List<Box> hurtboxes;
     public float anchorX = .5f;
@@ -19,23 +15,15 @@ public class ImageComponent extends JLabel
 
     public JComponent currentCreating;
 
-    ImageComponent(File file)
+    ImageComponent(String name, BufferedImage image)
     {
-        super(file.getName());
+        super(name);
         hitboxes = new ArrayList<Box>();
         hurtboxes = new ArrayList<Box>();
-        try
-        {
-            read = ImageIO.read(file);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            MainWindow.handleError();
-        }
+        
         setSize(100, 115);
-        this.setIcon(new ImageIcon(read.getScaledInstance(100, 115 , java.awt.Image.SCALE_DEFAULT)));
-        this.setName(file.getName());
+        this.setIcon(new ImageIcon(image.getScaledInstance(100, 115 , java.awt.Image.SCALE_DEFAULT)));
+        this.setName(name);
         setAlignmentX(JLabel.CENTER_ALIGNMENT);
         setAlignmentY(JLabel.BOTTOM_ALIGNMENT);
         setIconTextGap(15);

@@ -1,8 +1,12 @@
 {
+	
 	"folders": [
 		{
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"editor.tabSize": 4,
+		"editor.autoIndent": true
+	}
 }
