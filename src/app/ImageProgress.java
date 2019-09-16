@@ -24,6 +24,7 @@ public class ImageProgress
     public long currentReadSize = 0;
     public long totalReadSize = 0;
     public long completedSize = 0;
+    private boolean scheduledToStop = false;
 
     public BufferedImage imageRead;
     FileInputStream fileInputStream;
@@ -46,6 +47,7 @@ public class ImageProgress
     
     Callable<?> onProgressHandler = null;
     Callable<?> onCompleteHandler = null;
+    Callable<?> onProcessCompleteHandler = null;
 
     public boolean setImageToRead(File img)
     {
@@ -76,8 +78,7 @@ public class ImageProgress
           }
           else
           {
-            filesSize = 0;
-            scheduledFiles.clear();
+            forceStop();
             throw new Error("Could not read " + imgs[i].getName());
           }
       }
@@ -104,6 +105,11 @@ public class ImageProgress
       onCompleteHandler = call;	
     }
 
+    public void setOnProcessCompleteHandler(Callable<?> call)
+    {
+      onProcessCompleteHandler = call;
+    }
+
     private void finishExecution()
     {
       
@@ -118,6 +124,21 @@ public class ImageProgress
         e.printStackTrace();
       }
     }
+
+    public void forceStop()
+    {
+      scheduledToStop = true;
+    }
+    private void stopProcess()
+    {
+      filesSize = 0;
+      scheduledFiles.clear();
+      currentProgress = 0;
+      currentReadSize = 0;
+      currentScheduledFile = null;
+      t = null;
+      imageRead = null;
+    }
     
     ImageProgress(JProgressBar ref)
     {
@@ -127,16 +148,13 @@ public class ImageProgress
         {
             public void imageComplete(ImageReader source) 
             {
-                System.out.println("image complete " + source);
                 completedSize+= currentScheduledFile.length();
             }
       
             public void imageProgress(ImageReader source, float percentageDone) 
             {
               totalReadSize = completedSize + getBytesReadFromFile(percentageDone);
-              //System.out.println("image progress " + source + ": " + currentProgress * 100 + "%");
-              currentProgress = totalReadSize / filesSize;
-              System.out.println(currentProgress);
+              currentProgress = (float)totalReadSize / filesSize;
               ref.setValue((int)(currentProgress * 100));
               if(onProgressHandler != null)
               {
@@ -153,7 +171,6 @@ public class ImageProgress
       
             public void imageStarted(ImageReader source, int imageIndex) 
             {
-              System.out.println("image #" + imageIndex + " started " + source);
             }
       
             public void readAborted(ImageReader source) 
@@ -201,17 +218,34 @@ public class ImageProgress
           {
             while(t != null)
             {
+              if(scheduledToStop)
+              {
+                break;
+              }
               try 
               {
-                imageRead = reader.read(0);
-                finishExecution();
-                readNextFile();
+               imageRead = reader.read(0);
+               finishExecution();
+               readNextFile();
               }
-               catch (IOException e) 
-               {
-                  e.printStackTrace();
-               }    				
+              catch (IOException e) 
+              {
+                 e.printStackTrace();
+              }
             }
+            if(onProcessCompleteHandler != null)
+            {
+              try
+              {
+                onProcessCompleteHandler.call();
+              }
+              catch(Exception e)
+              {
+                e.printStackTrace();
+              }
+            }
+            if(scheduledToStop)
+              stopProcess();
           }
       });
     	t.start();

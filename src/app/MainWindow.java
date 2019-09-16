@@ -18,6 +18,7 @@ import java.awt.Color;
 public class MainWindow extends JFrame 
 {
 	public static Color darkerGray = new Color(0x1e1e1e);
+	public static MainWindow mainRef;
 	public static enum MODE
     {
         POINTER,
@@ -53,6 +54,7 @@ public class MainWindow extends JFrame
 				try 
 				{
 					MainWindow frame = new MainWindow();
+					MainWindow.mainRef = frame;
 			        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			        frame.getContentPane().setBackground(darkerGray);
 			        frame.getContentPane().setForeground(darkerGray);
