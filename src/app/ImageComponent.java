@@ -1,6 +1,8 @@
 package app;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +26,59 @@ public class ImageComponent extends JLabel
         setSize(100, 115);
         this.setIcon(new ImageIcon(image.getScaledInstance(100, 115 , java.awt.Image.SCALE_DEFAULT)));
         this.setName(name);
-        setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        setAlignmentY(JLabel.BOTTOM_ALIGNMENT);
+        setVerticalTextPosition(JLabel.BOTTOM);
+        setHorizontalTextPosition(JLabel.CENTER);
+        setBackground(Color.GRAY);
         setIconTextGap(15);
-        setBorder(BorderFactory.createLineBorder(Color.black));
+        setForeground(Color.WHITE);
+        setBorder(BorderFactory.createLineBorder(Color.WHITE));
+        
+        ImageComponent comp = this;
+        addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if(ImportedView.currentSelected != comp)
+				{
+					comp.setOpaque(false);
+					comp.setBackground(Color.LIGHT_GRAY);
+					comp.setForeground(Color.WHITE);
+					comp.repaint();
+				}				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) 
+			{
+				if(ImportedView.currentSelected != comp)
+				{
+					comp.setOpaque(true);
+					comp.setBackground(Color.GRAY);
+					comp.repaint();	
+				}
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				ImportedView.setSelected(comp);
+				
+			}
+		});
+        
         
     }
 

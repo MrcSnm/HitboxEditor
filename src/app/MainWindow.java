@@ -4,16 +4,21 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JMenu;
+import java.awt.SystemColor;
 
 public class MainWindow extends JFrame 
 {
@@ -56,7 +61,7 @@ public class MainWindow extends JFrame
 					MainWindow frame = new MainWindow();
 					MainWindow.mainRef = frame;
 			        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			        frame.getContentPane().setBackground(darkerGray);
+			        frame.getContentPane().setBackground(Color.BLACK);
 			        frame.getContentPane().setForeground(darkerGray);
 					frame.setVisible(true);
 				} catch (Exception e) 
@@ -73,13 +78,33 @@ public class MainWindow extends JFrame
 	public MainWindow() 
 	{
 		
-		setForeground(darkerGray);
+		setForeground(Color.BLACK);
 		setTitle("HitboxEditor by Hipreme");
 		
 		
 		final MainWindow window = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 609, 476);
+		
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setForeground(SystemColor.textHighlight);
+		menuBar.setBorder(BorderFactory.createLineBorder(new Color(0xccccff), 2, true));
+		menuBar.setBackground(Color.DARK_GRAY);
+		setJMenuBar(menuBar);
+		
+		JMenu mnNewMenu = new JMenu("File");
+		mnNewMenu.setForeground(Color.WHITE);
+		menuBar.add(mnNewMenu);
+		
+		JMenuItem mntmSave = new JMenuItem("Save");
+		mntmSave.setForeground(Color.WHITE);
+		mntmSave.setBackground(Color.DARK_GRAY);
+		mnNewMenu.add(mntmSave);
+		
+		JMenuItem mntmLoad = new JMenuItem("Load");
+		mntmLoad.setForeground(Color.WHITE);
+		mntmLoad.setBackground(Color.DARK_GRAY);
+		mnNewMenu.add(mntmLoad);
 		contentPane = new JPanel();
 		contentPane.setForeground(darkerGray);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -92,11 +117,13 @@ public class MainWindow extends JFrame
 		contentPane.setLayout(gbl_contentPane);
 		
 		final ImportedView scrollPane = new ImportedView();
+		scrollPane.panel.setBackground(Color.DARK_GRAY);
 		scrollPane.setBackground(Color.GRAY);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 1;
 		gbc_scrollPane.gridy = 13;
+		
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
 		
@@ -108,8 +135,9 @@ public class MainWindow extends JFrame
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				
-				scrollPane.addImportedImages(CrossPlatformFunctions.crossPlatformSelectMulti("Select images/frames to create hitbox", "png"));
+				File[] f = CrossPlatformFunctions.crossPlatformSelectMulti("Select images/frames to create hitbox", "png");
+				if(f != null && f.length != 0)
+					scrollPane.addImportedImages(f);
 			}
 		});
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();

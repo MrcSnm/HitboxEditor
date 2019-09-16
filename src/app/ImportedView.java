@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -24,13 +22,41 @@ public class ImportedView extends JScrollPane
     public Map<String, ImageComponent> images;
     public JPanel panel;
     public JDialog dialog;
-    public static ImageComponent currentSelected;
+    public static ImageComponent currentSelected = null;
+    private static ImportedView ref = null;
     public ImageProgress imageProgress;
     JProgressBar j;
+    
+    public static void setSelected(ImageComponent img)
+    {
+    	if(img == currentSelected)
+    		return;
+    	if(currentSelected != null)
+    		unselect();
+    	if(img == null)
+    		return;
+    	currentSelected = img;
+    	img.setOpaque(true);
+    	img.setForeground(Color.CYAN);
+    	img.repaint();
+    	
+    	
+    }
+    
+    private static void unselect()
+    {
+    	currentSelected.setForeground(Color.WHITE);
+    	currentSelected.setOpaque(false);
+    	currentSelected.repaint();
+    	currentSelected = null;
+    	
+    }
     
     public ImportedView()
     {
         super();
+        if(ref == null)
+        	ref = this;
         images = new HashMap<String, ImageComponent>();
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         panel = new JPanel(true);
