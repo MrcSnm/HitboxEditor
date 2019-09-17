@@ -76,6 +76,7 @@ public class ImportedView extends JScrollPane
         j.setStringPainted(true);
         getViewport().add(panel);
 
+
         imageProgress = new ImageProgress(j);
         imageProgress.setOnCompleteHandler(new Callable<String>()
         {

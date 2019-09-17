@@ -115,6 +115,7 @@ public class MainWindow extends JFrame
 		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
+
 		
 		final ImportedView scrollPane = new ImportedView();
 		scrollPane.panel.setBackground(Color.DARK_GRAY);
