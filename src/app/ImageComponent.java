@@ -14,6 +14,7 @@ public class ImageComponent extends JLabel
     public List<Box> hurtboxes;
     public float anchorX = .5f;
     public float anchorY = .5f;
+    public BufferedImage texture;
 
     public JComponent currentCreating;
 
@@ -25,6 +26,7 @@ public class ImageComponent extends JLabel
         
         setSize(100, 115);
         this.setIcon(new ImageIcon(image.getScaledInstance(100, 115 , java.awt.Image.SCALE_DEFAULT)));
+        texture = image;
         this.setName(name);
         setVerticalTextPosition(JLabel.BOTTOM);
         setHorizontalTextPosition(JLabel.CENTER);

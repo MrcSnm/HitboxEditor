@@ -28,7 +28,7 @@ public class Editor extends JScrollPane
             @Override
             public void mouseReleased(MouseEvent e) 
             {
-                if(currentCreating.RECT_W != 0 && currentCreating.RECT_H != 0)
+                if(currentCreating.RECT_X != currentCreating.RECT_X_2 && currentCreating.RECT_Y != currentCreating.RECT_Y_2)
                 {
                     switch(currentMode)
                     {
@@ -48,12 +48,37 @@ public class Editor extends JScrollPane
             @Override
             public void mousePressed(MouseEvent e) 
             {
+                currentCreating = new Box(e.getX(), e.getY(), 0, 0);
+                editor.currentMode = MainWindow.currentMode;
+                switch(editor.currentMode)
+                {
+                    case HITBOX:
+                        currentCreating.boxBorderColor = new Color(255, 0, 0);
+                        currentCreating.boxFillColor = new Color(255, 0, 0, 100);
+                        editor.add(currentCreating);
+                        break;
+                    case HURTBOX:
+                        currentCreating.boxBorderColor = new Color(0, 255, 0);
+                        currentCreating.boxFillColor = new Color(0, 255, 0, 100);
+                        editor.add(currentCreating);
+                        break;
+                    case ANCHOR:
+                        editor.setAnchor(e.getX(), e.getY());
+                        //Anchor Set Position
+                        break;
+                    case POINTER:
+                        break;
+                }
             }
         
             @Override
             public void mouseExited(MouseEvent e) 
             {
-                currentCreating = null;
+                if(currentCreating != null)
+                {
+                    editor.remove(currentCreating);
+                    currentCreating = null;
+                }
                 
             }
         
@@ -66,24 +91,7 @@ public class Editor extends JScrollPane
             @Override
             public void mouseClicked(MouseEvent e) 
             {
-                currentCreating = new Box(e.getX(), e.getY(), 0, 0);
-                editor.currentMode = MainWindow.currentMode;
-                switch(editor.currentMode)
-                {
-                    case HITBOX:
-                        currentCreating.boxBorderColor = new Color(255, 0, 0);
-                        currentCreating.boxFillColor = new Color(255, 0, 0, 100);
-                        break;
-                    case HURTBOX:
-                        currentCreating.boxBorderColor = new Color(0, 255, 0);
-                        currentCreating.boxFillColor = new Color(0, 255, 0, 100);
-                        break;
-                    case ANCHOR:
-                        //Anchor Set Position
-                        break;
-                    case POINTER:
-                        break;
-                }
+                
             }
         });
 
@@ -92,23 +100,54 @@ public class Editor extends JScrollPane
             @Override
             public void mouseMoved(MouseEvent e) 
             {
-               currentCreating.RECT_W = e.getX();
-               currentCreating.RECT_H = e.getY(); 
+               
             }
         
             @Override
             public void mouseDragged(MouseEvent e) {
-                // TODO Auto-generated method stub
-                
+                switch(editor.currentMode)
+                {
+                    case HITBOX:
+                    case HURTBOX:
+                        if(currentCreating != null)
+                            currentCreating.setSizeByPoint(e.getX(), e.getY()); 
+                        break;
+                    case ANCHOR:
+                        editor.setAnchor(e.getX(), e.getY());
+                        break;
+                    case POINTER:
+                        break;
+                }
             }
         });
+    }
 
-    
-        
+    public void setAnchor(int x, int y)
+    {
+        if(editingComponent != null)
+        {
+            editingComponent.anchorX = (float)editingComponent.texture.getWidth() / x;
+            editingComponent.anchorY = (float)editingComponent.texture.getHeight() / y;
+        }
     }
 
     public void setCurrentEditing(ImageComponent ic)
     {
+        if(editingComponent != null)
+        {
+            for(Box hitbox : editingComponent.hitboxes)
+                remove(hitbox);
+            for(Box hurtbox : editingComponent.hurtboxes)
+                remove(hurtbox);
+          //  remove(editingComponent.texture);
+        }
 
+        for(Box hitbox : ic.hitboxes)
+            add(hitbox);
+        for(Box hurtbox : ic.hurtboxes)
+            add(hurtbox);
+        //add(editingComponent.texture);
+
+        editingComponent = ic;
     }
 }

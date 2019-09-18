@@ -6,16 +6,35 @@ import javax.swing.*;
 
 public class Box extends JComponent
 {
-   public int RECT_X, RECT_Y, RECT_W, RECT_H;
+   public int RECT_X, RECT_Y, RECT_X_2, RECT_Y_2;
+   public int startX, startY;
    public Color boxBorderColor;
    public Color boxFillColor;
 
-   Box(int x, int y, int w, int h)
+   Box(int x, int y, int X_2, int Y_2)
    {
        RECT_X = x;
        RECT_Y = y;
-       RECT_W = w; 
-       RECT_H = h;
+       RECT_X_2 = X_2; 
+       RECT_Y_2 = Y_2;
+   }
+
+   public void setStartPoint(int x, int y)
+   {
+      startX = x;
+      startY = y;
+   }
+
+   public void setSizeByPoint(int x, int y)
+   {
+      if(x <= startX)
+         RECT_X = x;
+      else
+         RECT_X_2 = x;
+      if(y <= startY)
+         RECT_Y = y;
+      else
+         RECT_Y_2 = y;
    }
 
    @Override
@@ -24,14 +43,14 @@ public class Box extends JComponent
       super.paintComponent(g);
       // draw the rectangle here
       g.setColor(boxFillColor);
-      g.fillRect(RECT_X, RECT_Y, RECT_W, RECT_H);
+      g.fillRect(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
       g.setColor(boxBorderColor);
-      g.drawRect(RECT_X, RECT_Y, RECT_W, RECT_H);
+      g.drawRect(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
    @Override
    public Dimension getPreferredSize() 
    {
-      return new Dimension(RECT_W + 2 * RECT_X, RECT_H + 2 * RECT_Y);
+      return new Dimension(RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 }
