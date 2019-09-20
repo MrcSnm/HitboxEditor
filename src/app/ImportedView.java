@@ -19,6 +19,7 @@ import javax.swing.border.LineBorder;
 
 public class ImportedView extends JScrollPane
 {
+    public Editor editorRef;
     public Map<String, ImageComponent> images;
     public JPanel panel;
     public JDialog dialog;
@@ -35,10 +36,12 @@ public class ImportedView extends JScrollPane
     		unselect();
     	if(img == null)
     		return;
-    	currentSelected = img;
+        currentSelected = img;
+        if(ref != null && ref.editorRef != null)
+            ref.editorRef.setCurrentEditing(img);
     	img.setOpaque(true);
     	img.setForeground(Color.CYAN);
-    	img.repaint();
+        img.repaint();
     	
     	
     }
@@ -52,16 +55,17 @@ public class ImportedView extends JScrollPane
     	
     }
     
-    public ImportedView()
+    public ImportedView(Editor editor)
     {
         super();
         if(ref == null)
-        	ref = this;
+            ref = this;
+        editorRef = editor;
         images = new HashMap<String, ImageComponent>();
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         panel = new JPanel(true);
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-        panel.setPreferredSize(new Dimension(500, 1000));
+        panel.setPreferredSize(new Dimension(250, 100));
 
         dialog = new JDialog((JDialog)null, "Load");
         dialog.setBackground(MainWindow.darkerGray);
@@ -74,7 +78,7 @@ public class ImportedView extends JScrollPane
         j.setMaximum(100);
         j.setMinimum(0);
         j.setStringPainted(true);
-        getViewport().add(panel);
+        setViewportView(panel);
 
 
         imageProgress = new ImageProgress(j);

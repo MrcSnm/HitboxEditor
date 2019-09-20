@@ -16,6 +16,8 @@ public class ImageComponent extends JLabel
     public float anchorY = .5f;
     public BufferedImage texture;
 
+    public String imgName;
+
     public JComponent currentCreating;
 
     ImageComponent(String name, BufferedImage image)
@@ -28,6 +30,7 @@ public class ImageComponent extends JLabel
         this.setIcon(new ImageIcon(image.getScaledInstance(100, 115 , java.awt.Image.SCALE_DEFAULT)));
         texture = image;
         this.setName(name);
+        imgName = name;
         setVerticalTextPosition(JLabel.BOTTOM);
         setHorizontalTextPosition(JLabel.CENTER);
         setBackground(Color.GRAY);

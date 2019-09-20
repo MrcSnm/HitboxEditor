@@ -1,66 +1,87 @@
 package app;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class Editor extends JScrollPane
 {
-    private Box currentCreating;
-    private ImageComponent editingComponent;
-    private JPanel panel;
-    private MainWindow.MODE currentMode = MainWindow.MODE.POINTER;
+    public Box currentCreating;
+    public List<ImageComponent> editedComponents = new ArrayList<ImageComponent>();
+    public ImageComponent editingComponent;
+    public JPanel panel;
+    public MainWindow.MODE currentMode = MainWindow.MODE.POINTER;
+    private JLabel imageView;
 
     public Editor()
     {
         super();
         panel = new JPanel(true);
+        imageView = new JLabel();
+        imageView.setBorder(new LineBorder(new Color(255, 255, 255, 150), 5));
+        panel.setLayout(new BorderLayout());
+        panel.setPreferredSize(new Dimension(1000, 300));
+        panel.add(imageView);
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
-        add(panel);
+        setViewportView(panel);
 
         final Editor editor = this;
+
+
         addMouseListener(new MouseListener(){
         
             @Override
             public void mouseReleased(MouseEvent e) 
             {
-                if(currentCreating.RECT_X != currentCreating.RECT_X_2 && currentCreating.RECT_Y != currentCreating.RECT_Y_2)
+                if(currentCreating != null)
                 {
-                    switch(currentMode)
+                    if(currentCreating.RECT_X != currentCreating.RECT_X_2 && currentCreating.RECT_Y != currentCreating.RECT_Y_2)
                     {
-                        case HITBOX:
-                            editingComponent.hitboxes.add(currentCreating);
-                            break;
-                        case HURTBOX:
-                            editingComponent.hurtboxes.add(currentCreating);
-                            break;
-                        default:
-                            break;
+                        switch(currentMode)
+                        {
+                            case HITBOX:
+                                editingComponent.hitboxes.add(currentCreating);
+                                break;
+                            case HURTBOX:
+                                editingComponent.hurtboxes.add(currentCreating);
+                                break;
+                            default:
+                                break;
+                        }
                     }
+                    currentCreating = null;
                 }
-                currentCreating = null;
             }
         
             @Override
             public void mousePressed(MouseEvent e) 
             {
                 currentCreating = new Box(e.getX(), e.getY(), 0, 0);
+                currentCreating.setStartPoint(e.getX(), e.getY());
                 editor.currentMode = MainWindow.currentMode;
                 switch(editor.currentMode)
                 {
                     case HITBOX:
                         currentCreating.boxBorderColor = new Color(255, 0, 0);
                         currentCreating.boxFillColor = new Color(255, 0, 0, 100);
-                        editor.add(currentCreating);
+                        panel.add(currentCreating);
+                        editor.getViewport().validate();
                         break;
                     case HURTBOX:
                         currentCreating.boxBorderColor = new Color(0, 255, 0);
                         currentCreating.boxFillColor = new Color(0, 255, 0, 100);
-                        editor.add(currentCreating);
+                        panel.add(currentCreating);
+                        editor.getViewport().validate();
                         break;
                     case ANCHOR:
                         editor.setAnchor(e.getX(), e.getY());
@@ -111,6 +132,7 @@ public class Editor extends JScrollPane
                     case HURTBOX:
                         if(currentCreating != null)
                             currentCreating.setSizeByPoint(e.getX(), e.getY()); 
+                        currentCreating.repaint();
                         break;
                     case ANCHOR:
                         editor.setAnchor(e.getX(), e.getY());
@@ -136,18 +158,66 @@ public class Editor extends JScrollPane
         if(editingComponent != null)
         {
             for(Box hitbox : editingComponent.hitboxes)
-                remove(hitbox);
+                panel.remove(hitbox);
             for(Box hurtbox : editingComponent.hurtboxes)
-                remove(hurtbox);
-          //  remove(editingComponent.texture);
+                panel.remove(hurtbox);
+            imageView.setIcon(null);
         }
+        editingComponent = ic;
 
         for(Box hitbox : ic.hitboxes)
-            add(hitbox);
+            panel.add(hitbox);
         for(Box hurtbox : ic.hurtboxes)
-            add(hurtbox);
-        //add(editingComponent.texture);
+            panel.add(hurtbox);
+        imageView.setIcon(new ImageIcon(editingComponent.texture));
+        panel.setPreferredSize(new Dimension(ic.texture.getWidth() + 400, ic.texture.getHeight() + 200));
 
-        editingComponent = ic;
+        getViewport().validate();
+    }
+
+
+    public void saveEdited()
+    {
+
+        Collections.sort(editedComponents, new Comparator<ImageComponent>()
+        {
+            @Override
+            public int compare(ImageComponent i1, ImageComponent i2)
+            {
+                return i1.imgName.compareTo(i2.imgName);
+            }
+        });
+
+        String saveString = "{\n";
+
+        for(ImageComponent edited : editedComponents)
+        {
+            saveString+= "\t";
+            saveString+= edited.imgName + " : " + "\n";
+            saveString+= "\t{\n" + "\t\t";
+            if(edited.hitboxes.size() > 0)
+            {
+                saveString+= "\"hitboxes\" : \n\t\t\t[";
+                for(Box hitbox : edited.hitboxes)
+                {
+                    saveString+= "\n\t\t\t\t" + hitbox.getRectAsJSON();
+                }
+                saveString+= "\n\t\t\t]";
+            }
+            if(edited.hurtboxes.size() > 0)
+            {
+                if(edited.hitboxes.size() > 0)
+                    saveString+= "\t\t";
+                saveString+= "\"hurtboxes\" : \n\t\t\t[";
+                for(Box hurtbox : edited.hurtboxes)
+                {
+                    saveString+= "\n\t\t\t\t" + hurtbox.getRectAsJSON();
+                }
+                saveString+= "\n\t\t\t]";
+            }
+            saveString+= "\n\t\t\"pivot\" : {\"x\" : " + edited.anchorX + ", \"y\" : " + edited.anchorY + "}";
+        }
+
+        saveString+= "\n}";
     }
 }

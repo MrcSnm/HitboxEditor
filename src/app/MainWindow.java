@@ -38,11 +38,7 @@ public class MainWindow extends JFrame
     	
 	}
 	
-
-	
-
-
-    public static MODE currentMode;
+    public static MODE currentMode = MODE.POINTER;
 
 
 	private JPanel contentPane;
@@ -116,8 +112,18 @@ public class MainWindow extends JFrame
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 
-		
-		final ImportedView scrollPane = new ImportedView();
+		final Editor editor = new Editor();
+		editor.panel.setBackground(Color.DARK_GRAY);
+		editor.setBackground(Color.GRAY);
+		GridBagConstraints gbc_editor = new GridBagConstraints();
+		gbc_editor.fill = GridBagConstraints.BOTH;
+		gbc_editor.gridx = 2;
+		gbc_editor.gridy = 1;
+	
+		contentPane.add(editor, gbc_editor);
+
+
+		final ImportedView scrollPane = new ImportedView(editor);
 		scrollPane.panel.setBackground(Color.DARK_GRAY);
 		scrollPane.setBackground(Color.GRAY);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();

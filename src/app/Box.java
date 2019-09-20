@@ -28,13 +28,32 @@ public class Box extends JComponent
    public void setSizeByPoint(int x, int y)
    {
       if(x <= startX)
+      {
+         RECT_X_2 = startX;
          RECT_X = x;
-      else
+      }
+      else 
+      {
+         RECT_X = startX;
          RECT_X_2 = x;
+      }
       if(y <= startY)
+      {
+         RECT_Y_2 = startY;
          RECT_Y = y;
+      }
       else
+      {
+         RECT_Y = startY;
          RECT_Y_2 = y;
+      }
+   }
+
+   public String getRectAsJSON()
+   {
+      String rect = "{\n";
+      rect+= "\t" + "\"x\" : " + RECT_X + ",\"y\": " + RECT_Y + ", \"width\" : " + (RECT_X_2 - RECT_X) + ", \"height\" : " + (RECT_Y_2 - RECT_Y);
+      return rect + "\n}";
    }
 
    @Override
