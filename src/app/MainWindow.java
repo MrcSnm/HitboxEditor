@@ -19,6 +19,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import java.awt.SystemColor;
+import javax.swing.border.BevelBorder;
 
 public class MainWindow extends JFrame 
 {
@@ -113,11 +114,12 @@ public class MainWindow extends JFrame
 		contentPane.setLayout(gbl_contentPane);
 
 		final Editor editor = new Editor();
+		editor.panel.setBorder(null);
 		editor.panel.setBackground(Color.DARK_GRAY);
 		editor.setBackground(Color.GRAY);
 		GridBagConstraints gbc_editor = new GridBagConstraints();
 		gbc_editor.fill = GridBagConstraints.BOTH;
-		gbc_editor.gridx = 2;
+		gbc_editor.gridx = 1;
 		gbc_editor.gridy = 1;
 	
 		contentPane.add(editor, gbc_editor);
