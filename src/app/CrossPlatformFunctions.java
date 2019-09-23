@@ -108,6 +108,17 @@ public class CrossPlatformFunctions
       return null;
    }
 
+   public static String getFileName(String fileDir) 
+   {
+      int index = 0;
+      
+      for (int i = 0, len = fileDir.length(); i < len; i++) {
+         if (fileDir.charAt(i) == '\\' || fileDir.charAt(i) == '/')
+            index = i;
+      }
+      return fileDir.substring(index + 1);
+   }
+
    public static String crossPlatformSave(String description, String file) {
       FileDialog f = new FileDialog((Frame) null, description, FileDialog.SAVE);
 

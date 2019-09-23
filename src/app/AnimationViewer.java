@@ -49,8 +49,9 @@ public class AnimationViewer extends JDialog
     private void updateFrame()
     {
         frameCounter++;
-        if(frameCounter % speed == 0)
-        {
+        frameCounter%= speed;
+        if(frameCounter == 0)
+        { 
             currentFrame++;
             currentFrame%= animationFrames.size();
             nextImage();

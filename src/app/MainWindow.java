@@ -1,12 +1,18 @@
 package app;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import app.file.Saver;
+
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.GridBagLayout;
@@ -93,6 +99,7 @@ public class MainWindow extends JFrame
 		menuBar.add(mnNewMenu);
 		
 		JMenuItem mntmSave = new JMenuItem("Save");
+		
 		mntmSave.setForeground(Color.WHITE);
 		mntmSave.setBackground(Color.DARK_GRAY);
 		mnNewMenu.add(mntmSave);
@@ -218,6 +225,15 @@ public class MainWindow extends JFrame
 		gbc_btnPointer.gridx = 0;
 		gbc_btnPointer.gridy = 4;
 		contentPane.add(btnPointer, gbc_btnPointer);
+
+		mntmSave.addActionListener(new ActionListener()
+		{
+		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Saver.saveProject(scrollPane);
+			}
+		});
 		
 	}
 	
