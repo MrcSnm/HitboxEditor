@@ -7,9 +7,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -27,6 +30,13 @@ public class ImportedView extends JScrollPane
     private static ImportedView ref = null;
     public ImageProgress imageProgress;
     JProgressBar j;
+
+
+    private List<List<Box>> scheduledHitboxes = new ArrayList<List<Box>>();
+    private List<List<Box>> scheduledHurtboxes = new ArrayList<List<Box>>();
+    private List<File> scheduledFiles = new ArrayList<File>();
+    private List<AtomicReference<Float>> scheduledPivotX = new ArrayList<AtomicReference<Float>>();
+    private List<AtomicReference<Float>> scheduledPivotY = new ArrayList<AtomicReference<Float>>();
     
     public static void setSelected(ImageComponent img)
     {
@@ -42,8 +52,6 @@ public class ImportedView extends JScrollPane
     	img.setOpaque(true);
     	img.setForeground(Color.CYAN);
         img.repaint();
-    	
-    	
     }
     
     private static void unselect()
@@ -52,8 +60,31 @@ public class ImportedView extends JScrollPane
     	currentSelected.setOpaque(false);
     	currentSelected.repaint();
     	currentSelected = null;
-    	
     }
+
+    public void scheduleCreation(List<Box> hitboxes, List<Box> hurtboxes, AtomicReference<Float>scheduledPX, AtomicReference<Float>scheludedPY, String imageName)
+    {
+        scheduledHitboxes.add(hitboxes);
+        scheduledHurtboxes.add(hurtboxes);
+        scheduledPivotX.add(scheduledPX);
+        scheduledPivotY.add(scheludedPY);
+        try
+        {
+            scheduledFiles.add(new File(imageName));
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void executeScheduled()
+    {
+        File[] files = scheduledFiles.toArray(new File[scheduledFiles.size()]);
+        scheduledFiles.clear();
+        addImportedImages(files);
+    }
+
     
     public ImportedView(Editor editor)
     {
@@ -95,6 +126,32 @@ public class ImportedView extends JScrollPane
                 }
                 ImageComponent im = new ImageComponent(name, imageProgress.imageRead);
 
+                if(ref.scheduledHitboxes.size() > 0)
+                {
+                    List<Box> imHitboxes = ref.scheduledHitboxes.get(0);
+                    for(int i = 0, len = imHitboxes.size(); i < len; i++)
+                    {
+                        Box hitbox = new Box(im.hitboxes, ref);
+                        hitbox.boxBorderColor = new Color(255,0, 0, 160);
+                        hitbox.boxFillColor = new Color(200, 0, 0, 100);
+                        imHitboxes.get(i).copyInto(hitbox);
+                    }
+    
+                    List<Box> imHurtboxes = ref.scheduledHurtboxes.get(0);
+                    for(int i = 0, len = imHurtboxes.size(); i < len; i++)
+                    {
+                        Box hurtbox = new Box(im.hurtboxes, ref);
+                        hurtbox.boxBorderColor = new Color(255,0, 0, 160);
+                        hurtbox.boxFillColor = new Color(200, 0, 0, 100);
+                        imHurtboxes.get(i).copyInto(hurtbox);
+                    }
+                    im.anchorX = scheduledPivotX.get(0).get();
+                    im.anchorY = scheduledPivotY.get(0).get();
+                    ref.scheduledHurtboxes.remove(0);
+                    ref.scheduledHitboxes.remove(0);
+                    ref.scheduledPivotX.remove(0);
+                    ref.scheduledPivotY.remove(0);
+                }
                 images.put(name,im);
                 panel.add(im, null);
                 panel.validate();
@@ -149,7 +206,7 @@ public class ImportedView extends JScrollPane
             dialog.setLocationRelativeTo(null);
             
         }
-         catch (IOException e)
+        catch (IOException e)
         {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

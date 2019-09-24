@@ -75,18 +75,14 @@ public class Editor extends JScrollPane
 		            	switch(editor.currentMode)
 		                {
 		                    case HITBOX:
-		                    	currentCreating = new Box(editingComponent.hitboxes, editingComponent);
+		                    	currentCreating = editingComponent.addHitbox();
 		                        currentCreating.setStartPoint(e.getX(), e.getY());
-		                        currentCreating.boxBorderColor = new Color(255, 0, 0);
-		                        currentCreating.boxFillColor = new Color(255, 0, 0, 100);
 		                        panel.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;
 		                    case HURTBOX:
-		                    	currentCreating = new Box(editingComponent.hurtboxes, editingComponent);
+		                    	currentCreating = editingComponent.addHurtbox();
 		                        currentCreating.setStartPoint(e.getX(), e.getY());
-		                        currentCreating.boxBorderColor = new Color(0, 255, 0);
-		                        currentCreating.boxFillColor = new Color(0, 255, 0, 100);
 		                        panel.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;

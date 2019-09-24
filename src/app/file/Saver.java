@@ -27,7 +27,7 @@ public class Saver
             saveString+="\t";
             buffer = entry.getValue();
             saveString+= "\"" + buffer.imgName + "\" : " + "\n\t{\n";
-            saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + buffer.anchorX + ", \"y\" : " + buffer.anchorY + "},\n";
+            saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + (float)buffer.anchorX + ", \"y\" : " + (float)buffer.anchorY + "},\n";
             saveString+= "\t\t" + addBox("hitboxes", buffer.hitboxes) + ",\n";
             saveString+= "\t\t" + addBox("hurtboxes", buffer.hurtboxes);
             saveString+="\n\t},\n";

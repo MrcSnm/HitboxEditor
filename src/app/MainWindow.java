@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import app.file.Loader;
 import app.file.Saver;
 
 import javax.swing.Action;
@@ -234,6 +235,15 @@ public class MainWindow extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Saver.saveProject(scrollPane);
+			}
+		});
+
+		mntmLoad.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Loader.loadProject(CrossPlatformFunctions.crossPlatformSelect("Load project file", "*.json"), scrollPane);
 			}
 		});
 		

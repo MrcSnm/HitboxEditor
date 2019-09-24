@@ -19,7 +19,7 @@ public class Box extends JComponent
    private List<Box> boxContainer;
    private Container boxParent;
 
-   Box(int x, int y, int X_2, int Y_2)
+   public Box(int x, int y, int X_2, int Y_2)
    {
        RECT_X = x;
        RECT_Y = y;
@@ -28,7 +28,7 @@ public class Box extends JComponent
    }
    
    
-   Box(List<Box> container, Container parent)
+   public Box(List<Box> container, Container parent)
    {
 	   boxContainer = container;
 	   boxParent = parent;
@@ -74,6 +74,14 @@ public class Box extends JComponent
          RECT_Y = startY;
          RECT_Y_2 = y;
       }
+   }
+
+   public void copyInto(Box b)
+   {
+      b.RECT_X = this.RECT_X;
+      b.RECT_X_2 = this.RECT_X_2;
+      b.RECT_Y = this.RECT_Y;
+      b.RECT_Y_2 = this.RECT_Y_2;
    }
 
    public String getRectAsJSON()

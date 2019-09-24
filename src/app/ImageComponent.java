@@ -126,20 +126,20 @@ public class ImageComponent extends JLabel
         }
     }
 
-    public void addHitbox(Box b)
+    public Box addHitbox()
     {
-        Box hitbox = new Box(0, 0, 0, 0);
+        Box hitbox = new Box(this.hitboxes, this);
         hitbox.boxBorderColor = new Color(255,0, 0, 160);
         hitbox.boxFillColor = new Color(200, 0, 0, 100);
-        this.hitboxes.add(b);
+        return hitbox;
     }
 
-    public void addHurtbox(Box b)
+    public Box addHurtbox()
     {
-        Box hurtbox = new Box(0, 0, 0, 0);
+        Box hurtbox = new Box(this.hurtboxes, this);
         hurtbox.boxBorderColor = new Color(0, 255, 0, 160);
         hurtbox.boxFillColor = new Color(0, 200, 0, 100);
-        this.hurtboxes.add(b);
+        return hurtbox;
     }
 
     public void setAnchor(float x, float y)
