@@ -15,6 +15,7 @@ public class ImageComponent extends JLabel
     public float anchorX = .5f;
     public float anchorY = .5f;
     public BufferedImage texture;
+    public String absolutePath;
 
     public String imgName;
 
@@ -131,6 +132,7 @@ public class ImageComponent extends JLabel
         Box hitbox = new Box(this.hitboxes, this);
         hitbox.boxBorderColor = new Color(255,0, 0, 160);
         hitbox.boxFillColor = new Color(200, 0, 0, 100);
+        this.hitboxes.add(hitbox);
         return hitbox;
     }
 
@@ -139,6 +141,7 @@ public class ImageComponent extends JLabel
         Box hurtbox = new Box(this.hurtboxes, this);
         hurtbox.boxBorderColor = new Color(0, 255, 0, 160);
         hurtbox.boxFillColor = new Color(0, 200, 0, 100);
+        this.hurtboxes.add(hurtbox);
         return hurtbox;
     }
 

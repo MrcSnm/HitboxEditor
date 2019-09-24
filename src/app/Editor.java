@@ -51,10 +51,8 @@ public class Editor extends JScrollPane
                         switch(currentMode)
                         {
                             case HITBOX:
-                                editingComponent.hitboxes.add(currentCreating);
                                 break;
                             case HURTBOX:
-                                editingComponent.hurtboxes.add(currentCreating);
                                 break;
                             default:
                                 break;

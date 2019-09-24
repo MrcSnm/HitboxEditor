@@ -62,6 +62,7 @@ public class Loader {
 
         int x, y, w, h;
         Box currentBox = new Box(0,0,0,0);
+        String name = "noname";
         List<Box> scheduledHitboxes = new ArrayList<Box>();
         List<Box> scheduledHurtboxes = new ArrayList<Box>();
         AtomicReference<Float> pivotX = new AtomicReference<Float>();
@@ -82,12 +83,15 @@ public class Loader {
             //GETTING Numbers \"\\w+\"\\s\\:\\s
             returned = line.split("\"\\w+\"\\s\\:\\s");
 
-            if(line.contains(".png"))
+            if(line.contains("\"absolutePath\""))
             {
                 scheduledHitboxes = new ArrayList<Box>();
                 scheduledHurtboxes = new ArrayList<Box>();
-                imported.scheduleCreation(scheduledHitboxes, scheduledHurtboxes, pivotX, pivotY, line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
-                System.out.println(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                imported.scheduleCreation(scheduledHitboxes, scheduledHurtboxes, pivotX, pivotY, line.substring(line.indexOf(": ") + 2).replaceAll("\\\\", "/").replaceAll("\\,", "").replaceAll("\"", ""));
+            }
+            else if(line.contains(".png"))
+            {
+                name = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
             }
             else if(line.contains("\"hitboxes\""))
             {
@@ -104,7 +108,7 @@ public class Loader {
             }
             else if(line.contains("\"hurtboxes\""))
             {
-                final List<Box> currentScheduleHB = scheduledHitboxes;
+                final List<Box> currentScheduleHB = scheduledHurtboxes;
                 boxCreationFunction = new Callable<Box>() 
                 {
                     public Box call()

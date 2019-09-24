@@ -118,31 +118,28 @@ public class ImportedView extends JScrollPane
             @Override
             public String call()
             {
-                System.out.println(ImageProgress.currentScheduledFile.getName());
                 String name = ImageProgress.currentScheduledFile.getName();
                 if(images.get(name) != null)
                 {
                     panel.remove(images.get(name));
                 }
                 ImageComponent im = new ImageComponent(name, imageProgress.imageRead);
+                im.absolutePath = ImageProgress.currentScheduledFile.getAbsolutePath();
 
                 if(ref.scheduledHitboxes.size() > 0)
                 {
                     List<Box> imHitboxes = ref.scheduledHitboxes.get(0);
                     for(int i = 0, len = imHitboxes.size(); i < len; i++)
                     {
-                        Box hitbox = new Box(im.hitboxes, ref);
-                        hitbox.boxBorderColor = new Color(255,0, 0, 160);
-                        hitbox.boxFillColor = new Color(200, 0, 0, 100);
+                        Box hitbox = im.addHitbox();
                         imHitboxes.get(i).copyInto(hitbox);
+                        System.out.println("Hitbox X: " + hitbox.RECT_X);
                     }
     
                     List<Box> imHurtboxes = ref.scheduledHurtboxes.get(0);
                     for(int i = 0, len = imHurtboxes.size(); i < len; i++)
                     {
-                        Box hurtbox = new Box(im.hurtboxes, ref);
-                        hurtbox.boxBorderColor = new Color(255,0, 0, 160);
-                        hurtbox.boxFillColor = new Color(200, 0, 0, 100);
+                        Box hurtbox = im.addHurtbox();
                         imHurtboxes.get(i).copyInto(hurtbox);
                     }
                     im.anchorX = scheduledPivotX.get(0).get();
@@ -195,9 +192,6 @@ public class ImportedView extends JScrollPane
 
     public void addImportedImages(File[] f)
     {
-        ImageComponent im;
-        String name;
-        
         imageProgress.setImagesToRead(f);
         try 
         {

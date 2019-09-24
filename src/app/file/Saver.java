@@ -21,12 +21,15 @@ public class Saver
         ImageComponent buffer;
         String saveString = "{\n\t" + addProp("projectName", projectName) + ",\n";
         boolean hasNext = false;
+
         for(Map.Entry<String, ImageComponent> entry : view.images.entrySet())
         {
             hasNext = true;
             saveString+="\t";
             buffer = entry.getValue();
+            String path = CrossPlatformFunctions.convertDirToOS(buffer.absolutePath).replaceAll("\\\\", "/");
             saveString+= "\"" + buffer.imgName + "\" : " + "\n\t{\n";
+            saveString+= "\t\t" + "\"absolutePath\" : \"" + path + "\",\n";
             saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + (float)buffer.anchorX + ", \"y\" : " + (float)buffer.anchorY + "},\n";
             saveString+= "\t\t" + addBox("hitboxes", buffer.hitboxes) + ",\n";
             saveString+= "\t\t" + addBox("hurtboxes", buffer.hurtboxes);
@@ -68,7 +71,7 @@ public class Saver
 
     private static void save(String content)
     {
-        String path = CrossPlatformFunctions.crossPlatformSave("Save project", "*.hbeditor");
+        String path = CrossPlatformFunctions.crossPlatformSave("Save project", "*.json");
         try
         {
             PrintWriter file;
