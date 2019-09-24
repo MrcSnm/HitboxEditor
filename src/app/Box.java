@@ -1,7 +1,13 @@
 package app;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+
 import javax.swing.*;
 
 public class Box extends JComponent
@@ -10,6 +16,8 @@ public class Box extends JComponent
    public int startX, startY;
    public Color boxBorderColor;
    public Color boxFillColor;
+   private List<Box> boxContainer;
+   private Container boxParent;
 
    Box(int x, int y, int X_2, int Y_2)
    {
@@ -17,6 +25,25 @@ public class Box extends JComponent
        RECT_Y = y;
        RECT_X_2 = X_2; 
        RECT_Y_2 = Y_2;
+   }
+   
+   
+   Box(List<Box> container, Container parent)
+   {
+	   boxContainer = container;
+	   boxParent = parent;
+	   
+   }
+   
+   
+   public boolean pointIntersection(int x, int y)
+   {
+	   return (x >= RECT_X && x <= RECT_X_2 && y>= RECT_Y && y<= RECT_Y_2);
+   }
+   
+   public void remove()
+   {
+	   boxContainer.remove(this);
    }
 
    public void setStartPoint(int x, int y)

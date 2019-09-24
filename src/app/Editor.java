@@ -34,6 +34,7 @@ public class Editor extends JScrollPane
         panel.add(imageView);
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         setViewportView(panel);
+        
 
         final Editor editor = this;
 
@@ -66,30 +67,72 @@ public class Editor extends JScrollPane
             @Override
             public void mousePressed(MouseEvent e) 
             {
-                currentCreating = new Box(e.getX(), e.getY(), 0, 0);
-                currentCreating.setStartPoint(e.getX(), e.getY());
                 editor.currentMode = MainWindow.currentMode;
-                switch(editor.currentMode)
-                {
-                    case HITBOX:
-                        currentCreating.boxBorderColor = new Color(255, 0, 0);
-                        currentCreating.boxFillColor = new Color(255, 0, 0, 100);
-                        panel.add(currentCreating);
-                        editor.getViewport().validate();
-                        break;
-                    case HURTBOX:
-                        currentCreating.boxBorderColor = new Color(0, 255, 0);
-                        currentCreating.boxFillColor = new Color(0, 255, 0, 100);
-                        panel.add(currentCreating);
-                        editor.getViewport().validate();
-                        break;
-                    case ANCHOR:
-                        editor.setAnchor(e.getX(), e.getY());
-                        //Anchor Set Position
-                        break;
-                    case POINTER:
-                        break;
-                }
+            	
+            	switch(e.getButton())
+            	{
+            		case MouseEvent.BUTTON1:
+		            	switch(editor.currentMode)
+		                {
+		                    case HITBOX:
+		                    	currentCreating = new Box(editingComponent.hitboxes, editingComponent);
+		                        currentCreating.setStartPoint(e.getX(), e.getY());
+		                        currentCreating.boxBorderColor = new Color(255, 0, 0);
+		                        currentCreating.boxFillColor = new Color(255, 0, 0, 100);
+		                        panel.add(currentCreating);
+		                        editor.getViewport().validate();
+		                        break;
+		                    case HURTBOX:
+		                    	currentCreating = new Box(editingComponent.hurtboxes, editingComponent);
+		                        currentCreating.setStartPoint(e.getX(), e.getY());
+		                        currentCreating.boxBorderColor = new Color(0, 255, 0);
+		                        currentCreating.boxFillColor = new Color(0, 255, 0, 100);
+		                        panel.add(currentCreating);
+		                        editor.getViewport().validate();
+		                        break;
+		                    case ANCHOR:
+		                        editor.setAnchor(e.getX(), e.getY());
+		                        //Anchor Set Position
+		                        break;
+		                    case POINTER:
+		                        break;
+		                }
+		            	break;
+            		case MouseEvent.BUTTON3:
+            			switch(editor.currentMode)
+            			{
+            				case HITBOX:
+            					for(Box b : editingComponent.hitboxes)
+            					{
+            						if(b.pointIntersection(e.getX(), e.getY()))
+            						{
+            							b.remove();
+            							panel.remove(b);
+            							editor.revalidate();
+            							currentCreating = null;
+            							break;
+            						}
+            					}
+            					break;
+            				case HURTBOX:
+            					for(Box b : editingComponent.hurtboxes)
+            					{
+            						if(b.pointIntersection(e.getX(), e.getY()))
+            						{
+            							b.remove();
+            							panel.remove(b);
+            							editor.revalidate();
+            							currentCreating = null;
+            							break;
+            						}
+            					}
+            					break;
+        					default:
+        						break;
+            			}
+            			break;
+            	}
+                
             }
         
             @Override
@@ -131,8 +174,10 @@ public class Editor extends JScrollPane
                     case HITBOX:
                     case HURTBOX:
                         if(currentCreating != null)
-                            currentCreating.setSizeByPoint(e.getX(), e.getY()); 
-                        currentCreating.repaint();
+                        {
+                        	currentCreating.setSizeByPoint(e.getX(), e.getY()); 
+                            currentCreating.repaint();	
+                        }
                         break;
                     case ANCHOR:
                         editor.setAnchor(e.getX(), e.getY());
