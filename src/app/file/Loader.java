@@ -140,8 +140,9 @@ public class Loader {
             }
             else if(returned.length == 4)
             {
-                pivotX.set(Float.parseFloat(returned[2].split("\\D")[0]));
-                pivotY.set(Float.parseFloat(returned[3].split("\\D")[0]));
+                pivotX.set(Float.parseFloat(returned[2].split("(\\,|\\}\\,)")[0]));
+                pivotY.set(Float.parseFloat(returned[3].split("(\\,|\\}\\,)")[0]));
+
             }
         }
         imported.executeScheduled();
