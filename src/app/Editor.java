@@ -32,6 +32,7 @@ public class Editor extends JScrollPane
         panel.setLayout(new BorderLayout());
         panel.setPreferredSize(new Dimension(1000, 300));
         panel.add(imageView);
+        imageView.setPreferredSize(new Dimension(500, 500));
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         setViewportView(panel);
         
@@ -205,12 +206,18 @@ public class Editor extends JScrollPane
         editingComponent = ic;
 
         for(Box hitbox : ic.hitboxes)
+        {
             panel.add(hitbox);
+            getViewport().validate();
+        }
         for(Box hurtbox : ic.hurtboxes)
+        {
             panel.add(hurtbox);
+            
+            getViewport().validate();
+        }
         imageView.setIcon(new ImageIcon(editingComponent.texture));
         panel.setPreferredSize(new Dimension(ic.texture.getWidth() + 400, ic.texture.getHeight() + 200));
-
         getViewport().validate();
     }
 

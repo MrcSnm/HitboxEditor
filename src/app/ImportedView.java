@@ -133,7 +133,6 @@ public class ImportedView extends JScrollPane
                     {
                         Box hitbox = im.addHitbox();
                         imHitboxes.get(i).copyInto(hitbox);
-                        System.out.println("Hitbox X: " + hitbox.RECT_X);
                     }
     
                     List<Box> imHurtboxes = ref.scheduledHurtboxes.get(0);

@@ -122,7 +122,8 @@ public class MainWindow extends JFrame
 		contentPane.setLayout(gbl_contentPane);
 
 		final Editor editor = new Editor();
-		editor.panel.setBorder(null);
+		//editor.panel.setBorder(null);
+		//editor.panel.setBa
 		editor.panel.setBackground(Color.DARK_GRAY);
 		editor.setBackground(Color.GRAY);
 		GridBagConstraints gbc_editor = new GridBagConstraints();

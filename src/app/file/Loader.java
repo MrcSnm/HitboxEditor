@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.Callable;
 
 import app.Box;
-import app.ImageComponent;
 import app.ImportedView;
 
 public class Loader {
