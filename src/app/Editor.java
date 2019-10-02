@@ -21,18 +21,22 @@ public class Editor extends JScrollPane
     public ImageComponent editingComponent;
     public JPanel panel;
     public MainWindow.MODE currentMode = MainWindow.MODE.POINTER;
-    private JLabel imageView;
+    private JButton imageView;
 
     public Editor()
     {
         super();
         panel = new JPanel(true);
-        imageView = new JLabel();
-        imageView.setBorder(new LineBorder(new Color(255, 255, 255, 150), 5));
-        panel.setLayout(new BorderLayout());
+        imageView = new JButton();
+        imageView.setEnabled(false);
+        imageView.setBackground(null);
+        imageView.setForeground(null);
+        imageView.setBorder(new LineBorder(new Color(180, 180, 180, 255), 5));
+        //panel.setLayout(new BorderLayout());
+        panel.setLayout(null);
         panel.setPreferredSize(new Dimension(1000, 300));
         panel.add(imageView);
-        imageView.setPreferredSize(new Dimension(500, 500));
+        //imageView.setPreferredSize(new Dimension(500, 500));
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         setViewportView(panel);
         
@@ -40,7 +44,8 @@ public class Editor extends JScrollPane
         final Editor editor = this;
 
 
-        addMouseListener(new MouseListener(){
+        addMouseListener(new MouseListener()
+        {
         
             @Override
             public void mouseReleased(MouseEvent e) 
@@ -67,7 +72,6 @@ public class Editor extends JScrollPane
             public void mousePressed(MouseEvent e) 
             {
                 editor.currentMode = MainWindow.currentMode;
-            	
             	switch(e.getButton())
             	{
             		case MouseEvent.BUTTON1:
@@ -81,7 +85,7 @@ public class Editor extends JScrollPane
 		                        break;
 		                    case HURTBOX:
 		                    	currentCreating = editingComponent.addHurtbox();
-		                        currentCreating.setStartPoint(e.getX(), e.getY());
+                                currentCreating.setStartPoint(e.getX(), e.getY());
 		                        panel.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;
@@ -138,7 +142,6 @@ public class Editor extends JScrollPane
                     editor.remove(currentCreating);
                     currentCreating = null;
                 }
-                
             }
         
             @Override
@@ -154,7 +157,8 @@ public class Editor extends JScrollPane
             }
         });
 
-        addMouseMotionListener(new MouseMotionListener(){
+        addMouseMotionListener(new MouseMotionListener()
+        {
         
             @Override
             public void mouseMoved(MouseEvent e) 
@@ -171,7 +175,7 @@ public class Editor extends JScrollPane
                         if(currentCreating != null)
                         {
                         	currentCreating.setSizeByPoint(e.getX(), e.getY()); 
-                            currentCreating.repaint();	
+                            currentCreating.revalidate();	
                         }
                         break;
                     case ANCHOR:
@@ -182,6 +186,18 @@ public class Editor extends JScrollPane
                 }
             }
         });
+    }
+
+    private void updateBounds()
+    {
+        Icon ic = imageView.getIcon();
+        int wid = ic.getIconWidth();
+        int hei = ic.getIconHeight();
+
+        imageView.setBounds(panel.getWidth() / 2 - wid / 2, 0, wid * 2, hei * 2);
+        imageView.validate();
+        panel.setPreferredSize(new Dimension(wid * 2, hei* 2));
+        panel.validate();
     }
 
     public void setAnchor(int x, int y)
@@ -202,6 +218,7 @@ public class Editor extends JScrollPane
             for(Box hurtbox : editingComponent.hurtboxes)
                 panel.remove(hurtbox);
             imageView.setIcon(null);
+            imageView.setDisabledIcon(null);
         }
         editingComponent = ic;
 
@@ -213,10 +230,11 @@ public class Editor extends JScrollPane
         for(Box hurtbox : ic.hurtboxes)
         {
             panel.add(hurtbox);
-            
             getViewport().validate();
         }
         imageView.setIcon(new ImageIcon(editingComponent.texture));
+        imageView.setDisabledIcon(new ImageIcon(editingComponent.texture));
+        updateBounds();
         panel.setPreferredSize(new Dimension(ic.texture.getWidth() + 400, ic.texture.getHeight() + 200));
         getViewport().validate();
     }

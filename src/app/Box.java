@@ -3,16 +3,15 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.*;
-
+import java.awt.Rectangle;
 public class Box extends JComponent
 {
    public int RECT_X, RECT_Y, RECT_X_2, RECT_Y_2;
+   public int RENDER_X, RENDER_Y;
+
    public int startX, startY;
    public Color boxBorderColor;
    public Color boxFillColor;
@@ -32,6 +31,7 @@ public class Box extends JComponent
    {
 	   boxContainer = container;
 	   boxParent = parent;
+      System.out.println("Teste");
 	   
    }
    
@@ -50,6 +50,8 @@ public class Box extends JComponent
    {
       startX = x;
       startY = y;
+      //RENDER_X = absX;
+      //RENDER_Y = absY;
    }
 
    public void setSizeByPoint(int x, int y)
@@ -74,6 +76,7 @@ public class Box extends JComponent
          RECT_Y = startY;
          RECT_Y_2 = y;
       }
+      setBounds(RECT_X,  RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
    public void copyInto(Box b)
@@ -97,14 +100,24 @@ public class Box extends JComponent
       super.paintComponent(g);
       // draw the rectangle here
       g.setColor(boxFillColor);
-      g.fillRect(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+      g.fillRect(0, 0, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
       g.setColor(boxBorderColor);
-      g.drawRect(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+      g.drawRect(0, 0, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
    @Override
    public Dimension getPreferredSize() 
    {
       return new Dimension(RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+   }
+
+   @Override
+   public Rectangle getBounds(Rectangle r)
+   {
+      super.getBounds(r);
+      r.width = RECT_X_2 - RECT_X;
+      r.height = RECT_Y_2 - RECT_Y;
+      return r;
+      
    }
 }
