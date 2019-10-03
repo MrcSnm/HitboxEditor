@@ -32,6 +32,9 @@ public class MainWindow extends JFrame
 {
 	public static Color darkerGray = new Color(0x1e1e1e);
 	public static MainWindow mainRef;
+
+
+	public static String PROJECT_PATH = null;
 	public static enum MODE
     {
         POINTER,

@@ -21,7 +21,7 @@ public class Editor extends JScrollPane
     public ImageComponent editingComponent;
     public JPanel panel;
     public MainWindow.MODE currentMode = MainWindow.MODE.POINTER;
-    private JButton imageView;
+    public JButton imageView;
 
     public Editor()
     {
@@ -29,6 +29,7 @@ public class Editor extends JScrollPane
         panel = new JPanel(true);
         imageView = new JButton();
         imageView.setEnabled(false);
+        imageView.setLayout(null);
         imageView.setBackground(null);
         imageView.setForeground(null);
         imageView.setBorder(new LineBorder(new Color(180, 180, 180, 255), 5));
@@ -43,8 +44,7 @@ public class Editor extends JScrollPane
 
         final Editor editor = this;
 
-
-        addMouseListener(new MouseListener()
+        imageView.addMouseListener(new MouseListener()
         {
         
             @Override
@@ -79,14 +79,14 @@ public class Editor extends JScrollPane
 		                {
 		                    case HITBOX:
 		                    	currentCreating = editingComponent.addHitbox();
-		                        currentCreating.setStartPoint(e.getX(), e.getY());
-		                        panel.add(currentCreating);
+                                currentCreating.setStartPoint(e.getX(), e.getY());
+		                        imageView.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;
 		                    case HURTBOX:
 		                    	currentCreating = editingComponent.addHurtbox();
                                 currentCreating.setStartPoint(e.getX(), e.getY());
-		                        panel.add(currentCreating);
+		                        imageView.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;
 		                    case ANCHOR:
@@ -106,7 +106,7 @@ public class Editor extends JScrollPane
             						if(b.pointIntersection(e.getX(), e.getY()))
             						{
             							b.remove();
-            							panel.remove(b);
+            							imageView.remove(b);
             							editor.revalidate();
             							currentCreating = null;
             							break;
@@ -119,7 +119,7 @@ public class Editor extends JScrollPane
             						if(b.pointIntersection(e.getX(), e.getY()))
             						{
             							b.remove();
-            							panel.remove(b);
+            							imageView.remove(b);
             							editor.revalidate();
             							currentCreating = null;
             							break;
@@ -142,6 +142,7 @@ public class Editor extends JScrollPane
                     editor.remove(currentCreating);
                     currentCreating = null;
                 }
+                
             }
         
             @Override
@@ -157,7 +158,7 @@ public class Editor extends JScrollPane
             }
         });
 
-        addMouseMotionListener(new MouseMotionListener()
+        imageView.addMouseMotionListener(new MouseMotionListener()
         {
         
             @Override
@@ -174,7 +175,7 @@ public class Editor extends JScrollPane
                     case HURTBOX:
                         if(currentCreating != null)
                         {
-                        	currentCreating.setSizeByPoint(e.getX(), e.getY()); 
+                            currentCreating.setSizeByPoint(e.getX(), e.getY()); 
                             currentCreating.revalidate();	
                         }
                         break;
@@ -182,7 +183,7 @@ public class Editor extends JScrollPane
                         editor.setAnchor(e.getX(), e.getY());
                         break;
                     case POINTER:
-                        break;
+                        break;  
                 }
             }
         });
@@ -195,6 +196,7 @@ public class Editor extends JScrollPane
         int hei = ic.getIconHeight();
 
         imageView.setBounds(panel.getWidth() / 2 - wid / 2, 0, wid * 2, hei * 2);
+
         imageView.validate();
         panel.setPreferredSize(new Dimension(wid * 2, hei* 2));
         panel.validate();
@@ -214,9 +216,9 @@ public class Editor extends JScrollPane
         if(editingComponent != null)
         {
             for(Box hitbox : editingComponent.hitboxes)
-                panel.remove(hitbox);
+                imageView.remove(hitbox);
             for(Box hurtbox : editingComponent.hurtboxes)
-                panel.remove(hurtbox);
+                imageView.remove(hurtbox);
             imageView.setIcon(null);
             imageView.setDisabledIcon(null);
         }
@@ -224,12 +226,12 @@ public class Editor extends JScrollPane
 
         for(Box hitbox : ic.hitboxes)
         {
-            panel.add(hitbox);
+            imageView.add(hitbox);
             getViewport().validate();
         }
         for(Box hurtbox : ic.hurtboxes)
         {
-            panel.add(hurtbox);
+            imageView.add(hurtbox);
             getViewport().validate();
         }
         imageView.setIcon(new ImageIcon(editingComponent.texture));

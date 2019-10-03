@@ -10,13 +10,12 @@ import java.awt.Rectangle;
 public class Box extends JComponent
 {
    public int RECT_X, RECT_Y, RECT_X_2, RECT_Y_2;
-   public int RENDER_X, RENDER_Y;
 
    public int startX, startY;
    public Color boxBorderColor;
    public Color boxFillColor;
    private List<Box> boxContainer;
-   private Container boxParent;
+   private JComponent boxParent;
 
    public Box(int x, int y, int X_2, int Y_2)
    {
@@ -27,12 +26,10 @@ public class Box extends JComponent
    }
    
    
-   public Box(List<Box> container, Container parent)
+   public Box(List<Box> container, JComponent parent)
    {
 	   boxContainer = container;
-	   boxParent = parent;
-      System.out.println("Teste");
-	   
+	   boxParent = parent;	   
    }
    
    
@@ -50,12 +47,12 @@ public class Box extends JComponent
    {
       startX = x;
       startY = y;
-      //RENDER_X = absX;
-      //RENDER_Y = absY;
    }
 
    public void setSizeByPoint(int x, int y)
    {
+
+      //RELATIVE
       if(x <= startX)
       {
          RECT_X_2 = startX;
@@ -76,7 +73,8 @@ public class Box extends JComponent
          RECT_Y = startY;
          RECT_Y_2 = y;
       }
-      setBounds(RECT_X,  RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+      
+      setBounds(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
    public void copyInto(Box b)
@@ -85,6 +83,7 @@ public class Box extends JComponent
       b.RECT_X_2 = this.RECT_X_2;
       b.RECT_Y = this.RECT_Y;
       b.RECT_Y_2 = this.RECT_Y_2;
+      b.setBounds(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
    public String getRectAsJSON()
@@ -102,7 +101,7 @@ public class Box extends JComponent
       g.setColor(boxFillColor);
       g.fillRect(0, 0, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
       g.setColor(boxBorderColor);
-      g.drawRect(0, 0, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+      g.drawRect(0, 0, (RECT_X_2 - RECT_X) - 1, (RECT_Y_2 - RECT_Y) - 1);
    }
 
    @Override

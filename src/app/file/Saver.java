@@ -8,6 +8,7 @@ import app.Box;
 import app.CrossPlatformFunctions;
 import app.ImageComponent;
 import app.ImportedView;
+import app.MainWindow;
 
 public class Saver
 {
@@ -71,7 +72,11 @@ public class Saver
 
     private static void save(String content)
     {
-        String path = CrossPlatformFunctions.crossPlatformSave("Save project", "*.json");
+        String path;
+        if(MainWindow.PROJECT_PATH != null)
+            path = MainWindow.PROJECT_PATH;
+        else
+            path = CrossPlatformFunctions.crossPlatformSave("Save project", "*.json");
         try
         {
             PrintWriter file;

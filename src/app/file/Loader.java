@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.Callable;
 
 import app.Box;
+import app.MainWindow;
 import app.ImportedView;
 
-public class Loader {
-    private Loader() {
-
-    }
+public class Loader 
+{
+    private Loader() {}
 
     public static ArrayList<String> getFileLines(String path) {
         BufferedReader f;
@@ -51,8 +51,8 @@ public class Loader {
     {
         ArrayList<String> lines = getFileLines(path);
         importedView.images.clear();
-    
         parse(lines, importedView);
+        MainWindow.PROJECT_PATH = path;
     }
 
     private static void parse(ArrayList<String> lines, ImportedView imported)
