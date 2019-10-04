@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import app.base.FilterableOptionsView;
 import app.file.Loader;
 import app.file.Saver;
 
@@ -112,11 +113,38 @@ public class MainWindow extends JFrame
 		JMenuItem mntmLoad = new JMenuItem("Load");
 		mntmLoad.setForeground(Color.WHITE);
 		mntmLoad.setBackground(Color.DARK_GRAY);
-		mnNewMenu.add(mntmLoad);
+        mnNewMenu.add(mntmLoad);
+        
+        JMenu mnNewMenuView = new JMenu("View");
+		mnNewMenuView.setForeground(Color.WHITE);
+		menuBar.add(mnNewMenuView);
+		
+		JMenuItem mntmAnimationView = new JMenuItem("Animation View");
+		
+		mntmAnimationView.setForeground(Color.WHITE);
+		mntmAnimationView.setBackground(Color.DARK_GRAY);
+        mnNewMenuView.add(mntmAnimationView);
+    
+        mntmAnimationView.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                new FilterableOptionsView();
+            }
+        });
+
+
+
+
+
+
 		contentPane = new JPanel();
 		contentPane.setForeground(darkerGray);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+        setContentPane(contentPane);
+        
+
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 0, 0};
 		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

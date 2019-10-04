@@ -1,4 +1,4 @@
-package app;
+package app.Animation;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
