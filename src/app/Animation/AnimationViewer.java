@@ -29,6 +29,7 @@ public class AnimationViewer extends JDialog
         imageView = new JPanel();
         add(imageView);
         imageView.add(currentImageName);
+
     }
 
     private void changeFrame(int frameNumber)

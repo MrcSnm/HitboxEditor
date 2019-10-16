@@ -1,0 +1,6 @@
+.settings/
+.vscode/
+.classpath
+.project
+bin/
+hbeditor.code-workspace

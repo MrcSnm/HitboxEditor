@@ -4,8 +4,12 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
 
+import app.Animation.AnimationMenu;
 import app.base.FilterableOptionsView;
 import app.file.Loader;
 import app.file.Saver;
@@ -25,6 +29,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import java.awt.SystemColor;
 import javax.swing.border.BevelBorder;
@@ -60,7 +65,19 @@ public class MainWindow extends JFrame
 	 */
 	public static void main(String[] args) 
 	{
-		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				UIManager.put("OptionPane.background", Color.DARK_GRAY);
+				UIManager.put("OptionPane.messageForeground", new ColorUIResource(Color.WHITE));
+				UIManager.put("OptionPane.foreground", new ColorUIResource(Color.DARK_GRAY));
+				System.out.println(UIManager.get("OptionPane.foreground").toString());
+				UIManager.put("Panel.background", Color.DARK_GRAY);
+				UIManager.put("Panel.foreground", new ColorUIResource(Color.DARK_GRAY));
+			}
+		});
 		EventQueue.invokeLater(new Runnable() {
 			public void run() 
 			{
@@ -87,8 +104,7 @@ public class MainWindow extends JFrame
 	{
 		
 		setForeground(Color.BLACK);
-		setTitle("HitboxEditor by Hipreme");
-		
+		setTitle("HitboxEditor by Hipreme");		
 		
 		final MainWindow window = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,6 +134,8 @@ public class MainWindow extends JFrame
         JMenu mnNewMenuView = new JMenu("View");
 		mnNewMenuView.setForeground(Color.WHITE);
 		menuBar.add(mnNewMenuView);
+
+		AnimationMenu.addTo(menuBar);
 		
 		JMenuItem mntmAnimationView = new JMenuItem("Animation View");
 		
@@ -130,13 +148,9 @@ public class MainWindow extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                new FilterableOptionsView();
+                FilterableOptionsView.startFilterableOptionsView();
             }
         });
-
-
-
-
 
 
 		contentPane = new JPanel();
