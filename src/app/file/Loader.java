@@ -49,6 +49,8 @@ public class Loader
 
     public static void loadProject(String path, ImportedView importedView)
     {
+        if(path == null || path.equals(""))
+            return;
         ArrayList<String> lines = getFileLines(path);
         importedView.images.clear();
         parse(lines, importedView);

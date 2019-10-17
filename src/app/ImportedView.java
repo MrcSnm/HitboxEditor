@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
+
+import app.file.Loader;
 
 public class ImportedView extends JScrollPane
 {
@@ -83,6 +86,11 @@ public class ImportedView extends JScrollPane
         File[] files = scheduledFiles.toArray(new File[scheduledFiles.size()]);
         scheduledFiles.clear();
         addImportedImages(files);
+    }
+
+    public void tryLoadOperation(String path)
+    {
+        Loader.loadProject(Paths.get(path).toString(), this);
     }
 
     

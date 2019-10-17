@@ -80,6 +80,8 @@ public class Saver
         try
         {
             PrintWriter file;
+            if(path == null || path.equals(""))
+                return;
             if(!path.contains(".json"))
                 path+= ".json";
             file = new PrintWriter(path);
