@@ -1,13 +1,19 @@
 package app.global;
 
+import java.net.URL;
+
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import java.awt.Image;
+
+import app.MainWindow;
 
 public class Globals
 {
-    public static boolean IS_DEBUG_ACTIVE = true;
+    public static boolean IS_DEBUG_ACTIVE = false;
 
     public static void debugLog(String output)
     {
@@ -39,5 +45,18 @@ public class Globals
         addKeyListener(jc, "shift " + keyName, "shift" + actionName, act);
         addKeyListener(jc, "alt " + keyName, "alt" + actionName, act);
         addKeyListener(jc, "alt shift " + keyName, "alt" + actionName, act);
+    }
+
+    public static Image createImage(String path, String description)
+    {
+        URL imageURL = MainWindow.class.getResource(path);
+         
+        if (imageURL == null) 
+        {
+            System.err.println("Resource not found: " + path);
+            return null;
+        }
+        else 
+            return (new ImageIcon(imageURL, description)).getImage();
     }
 }

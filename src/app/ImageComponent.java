@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
+import app.Animation.AnimationMenu;
+import app.global.KeyChecker;
+
 public class ImageComponent extends JLabel
 {
     public List<Box> hitboxes;
@@ -78,8 +81,10 @@ public class ImageComponent extends JLabel
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				ImportedView.setSelected(comp);
-				
+                if(!KeyChecker.IS_CONTROL_PRESSED)
+                    ImportedView.setSelected(comp);
+                else
+                    AnimationMenu.addAnimation(comp.getName());				
 			}
 		});
         

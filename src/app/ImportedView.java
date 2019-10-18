@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -28,6 +26,7 @@ import javax.swing.border.LineBorder;
 import app.file.Loader;
 import app.global.Globals;
 import app.global.KeyChecker;
+import app.global.UIDefaults;
 
 public class ImportedView extends JScrollPane {
     public Editor editorRef;
@@ -102,12 +101,12 @@ public class ImportedView extends JScrollPane {
         panel.setPreferredSize(new Dimension(250, 100));
 
         dialog = new JDialog((JDialog) null, "Load");
-        dialog.setBackground(MainWindow.darkerGray);
+        dialog.setBackground(UIDefaults.DARKER_GRAY);
         dialog.setForeground(Color.DARK_GRAY);
         dialog.setSize(400, 100);
         j = new JProgressBar();
         j.setBackground(Color.DARK_GRAY);
-        j.setForeground(MainWindow.darkerGray);
+        j.setForeground(UIDefaults.DARKER_GRAY);
         dialog.add(j);
         j.setMaximum(100);
         j.setMinimum(0);

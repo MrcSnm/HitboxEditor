@@ -1,17 +1,20 @@
 package app.base;
 
 import java.awt.Color;
-import java.awt.Frame;
-import java.awt.event.*;
 import java.awt.Component;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class FilterableOptionsView
 {
@@ -38,6 +41,9 @@ public class FilterableOptionsView
         String[] teste = { "Frames" };
         String[][] data = { { "Frames" }, { "Specs" }, { "Teste" } };
         tab = new JTable(data, teste);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        tab.setDefaultRenderer(String.class, centerRenderer);
 
         addButton = new JButton("Add Frames");
         addButton.setForeground(Color.WHITE);

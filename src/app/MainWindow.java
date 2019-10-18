@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,10 +30,10 @@ import app.file.Loader;
 import app.file.Saver;
 import app.global.Globals;
 import app.global.KeyChecker;
+import app.global.UIDefaults;
 
 public class MainWindow extends JFrame 
 {
-	public static Color darkerGray = new Color(0x1e1e1e);
     public static MainWindow mainRef;
     public static String scheduledProject = "";
 
@@ -84,7 +85,7 @@ public class MainWindow extends JFrame
 					MainWindow.mainRef = frame;
 			        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			        frame.getContentPane().setBackground(Color.BLACK);
-			        frame.getContentPane().setForeground(darkerGray);
+			        frame.getContentPane().setForeground(UIDefaults.DARKER_GRAY);
 					frame.setVisible(true);
 				} catch (Exception e) 
 				{
@@ -112,7 +113,6 @@ public class MainWindow extends JFrame
 		setJMenuBar(menuBar);
 
 		JMenu mnNewMenu = new JMenu("File");
-		mnNewMenu.setForeground(Color.WHITE);
 		menuBar.add(mnNewMenu);
 
         JMenuItem mntmSave = new JMenuItem("Save");
@@ -143,8 +143,16 @@ public class MainWindow extends JFrame
 
 		contentPane = new JPanel();
 		KeyChecker.start((JComponent)contentPane);
+		Globals.addKeyListener(contentPane, "alt ALT", "altFocus", new AbstractAction()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				menuBar.getMenu(0).doClick();
+			}
+		});
 
-		contentPane.setForeground(darkerGray);
+		contentPane.setForeground(UIDefaults.DARKER_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
 
