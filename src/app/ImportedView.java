@@ -3,6 +3,9 @@ package app;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -15,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -22,9 +26,10 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import app.file.Loader;
+import app.global.Globals;
+import app.global.KeyChecker;
 
-public class ImportedView extends JScrollPane
-{
+public class ImportedView extends JScrollPane {
     public Editor editorRef;
     public Map<String, ImageComponent> images;
     public JPanel panel;
@@ -34,70 +39,60 @@ public class ImportedView extends JScrollPane
     public ImageProgress imageProgress;
     JProgressBar j;
 
-
     private List<List<Box>> scheduledHitboxes = new ArrayList<List<Box>>();
     private List<List<Box>> scheduledHurtboxes = new ArrayList<List<Box>>();
     private List<File> scheduledFiles = new ArrayList<File>();
     private List<AtomicReference<Float>> scheduledPivotX = new ArrayList<AtomicReference<Float>>();
     private List<AtomicReference<Float>> scheduledPivotY = new ArrayList<AtomicReference<Float>>();
-    
-    public static void setSelected(ImageComponent img)
-    {
-    	if(img == currentSelected)
-    		return;
-    	if(currentSelected != null)
-    		unselect();
-    	if(img == null)
-    		return;
+
+    public static void setSelected(ImageComponent img) {
+        if (img == currentSelected)
+            return;
+        if (currentSelected != null)
+            unselect();
+        if (img == null)
+            return;
         currentSelected = img;
-        if(ref != null && ref.editorRef != null)
+        if (ref != null && ref.editorRef != null)
             ref.editorRef.setCurrentEditing(img);
-    	img.setOpaque(true);
-    	img.setForeground(Color.CYAN);
+        img.setOpaque(true);
+        img.setForeground(Color.CYAN);
         img.repaint();
     }
-    
-    private static void unselect()
-    {
-    	currentSelected.setForeground(Color.WHITE);
-    	currentSelected.setOpaque(false);
-    	currentSelected.repaint();
-    	currentSelected = null;
+
+    private static void unselect() {
+        currentSelected.setForeground(Color.WHITE);
+        currentSelected.setOpaque(false);
+        currentSelected.repaint();
+        currentSelected = null;
     }
 
-    public void scheduleCreation(List<Box> hitboxes, List<Box> hurtboxes, AtomicReference<Float>scheduledPX, AtomicReference<Float>scheludedPY, String imageName)
-    {
+    public void scheduleCreation(List<Box> hitboxes, List<Box> hurtboxes, AtomicReference<Float> scheduledPX,
+            AtomicReference<Float> scheludedPY, String imageName) {
         scheduledHitboxes.add(hitboxes);
         scheduledHurtboxes.add(hurtboxes);
         scheduledPivotX.add(scheduledPX);
         scheduledPivotY.add(scheludedPY);
-        try
-        {
+        try {
             scheduledFiles.add(new File(imageName));
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void executeScheduled()
-    {
+    public void executeScheduled() {
         File[] files = scheduledFiles.toArray(new File[scheduledFiles.size()]);
         scheduledFiles.clear();
         addImportedImages(files);
     }
 
-    public void tryLoadOperation(String path)
-    {
+    public void tryLoadOperation(String path) {
         Loader.loadProject(Paths.get(path).toString(), this);
     }
 
-    
-    public ImportedView(Editor editor)
-    {
+    public ImportedView(Editor editor) {
         super();
-        if(ref == null)
+        if (ref == null)
             ref = this;
         editorRef = editor;
         images = new HashMap<String, ImageComponent>();
@@ -106,7 +101,7 @@ public class ImportedView extends JScrollPane
         panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
         panel.setPreferredSize(new Dimension(250, 100));
 
-        dialog = new JDialog((JDialog)null, "Load");
+        dialog = new JDialog((JDialog) null, "Load");
         dialog.setBackground(MainWindow.darkerGray);
         dialog.setForeground(Color.DARK_GRAY);
         dialog.setSize(400, 100);
@@ -119,6 +114,15 @@ public class ImportedView extends JScrollPane
         j.setStringPainted(true);
         setViewportView(panel);
 
+        Globals.addKeyListenerIgnore(this, "W", "UP", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                if(KeyChecker.IS_CONTROL_PRESSED)
+                    System.out.println("Teste");
+            }
+        });
 
         imageProgress = new ImageProgress(j);
         imageProgress.setOnCompleteHandler(new Callable<String>()
@@ -209,7 +213,6 @@ public class ImportedView extends JScrollPane
         }
         catch (IOException e)
         {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

@@ -1,6 +1,5 @@
 package app.base;
 
-import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.*;
@@ -13,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 public class FilterableOptionsView
 {

@@ -2,5 +2,6 @@
 .vscode/
 .classpath
 .project
+.history/
 bin/
 hbeditor.code-workspace
