@@ -18,6 +18,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 
+import app.ImageComponent;
+import app.base.FilterableOptionsView;
 import app.global.UIDefaults;
 
 public class AnimationMenu extends JMenu 
@@ -25,6 +27,7 @@ public class AnimationMenu extends JMenu
     public static AnimationMenu instance;
     public static ButtonGroup currentBtn;
     private JMenuItem addButton;
+    private static AnimationItem selectedItem = null;
 
     private AnimationMenu() {
         super("Animations");
@@ -39,15 +42,16 @@ public class AnimationMenu extends JMenu
 
         KeyStroke hotkey = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK);
         addButton.setAccelerator(hotkey);
-        addButton.addActionListener(new ActionListener() {
+        addButton.addActionListener(new ActionListener() 
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) 
+            {
                 String animName = "";
                 animName = JOptionPane.showInputDialog(null, "Input an animation name", "New animation",
                         JOptionPane.PLAIN_MESSAGE);
-                if (animName != null && !animName.equals("")) {
+                if (animName != null && !animName.equals("")) 
                     addAnimation(animName);
-                }
             }
         });
 
@@ -62,7 +66,7 @@ public class AnimationMenu extends JMenu
 
     public static void addAnimation(String animationName) 
     {
-        JMenuItem item = new JMenuItem(animationName, UIDefaults.uncheckedIcon);
+        AnimationItem item = new AnimationItem(animationName, UIDefaults.uncheckedIcon);
         item.setModel(new JToggleButton.ToggleButtonModel());
         item.addItemListener(new ItemListener() 
         {
@@ -79,7 +83,9 @@ public class AnimationMenu extends JMenu
                             btns.nextElement().setIcon(UIDefaults.uncheckedIcon);
                         }
                         JMenuItem currentItem = (JMenuItem)e.getItem();
+                        selectedItem = (AnimationItem)currentItem;
                         currentItem.setIcon(UIDefaults.checkedIcon);
+                        AnimationViewer.setAnimation(getCurrentAnimation());
                     break;
                 }
             }
@@ -87,6 +93,20 @@ public class AnimationMenu extends JMenu
         });
         instance.add(item);
         currentBtn.add(item);
-    
+    }
+
+    public static AnimationItem getCurrentAnimation()
+    {
+        return selectedItem;
+    }
+
+    public static void addImageToAnimation(ImageComponent img)
+    {
+        if(selectedItem != null)
+        {
+            selectedItem.addImageComp(img);
+            AnimationViewer.setAnimation(selectedItem);
+            
+        }
     }
 }

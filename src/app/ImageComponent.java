@@ -1,13 +1,18 @@
 package app;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
+import app.Animation.AnimationItem;
 import app.Animation.AnimationMenu;
 import app.global.KeyChecker;
 
@@ -43,20 +48,11 @@ public class ImageComponent extends JLabel
         setBorder(BorderFactory.createLineBorder(Color.WHITE));
         
         ImageComponent comp = this;
-        addMouseListener(new MouseListener() {
-			
+        addMouseListener(new MouseAdapter() 
+        {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
+            public void mouseExited(MouseEvent e) 
+            {
 				if(ImportedView.currentSelected != comp)
 				{
 					comp.setOpaque(false);
@@ -84,11 +80,9 @@ public class ImageComponent extends JLabel
                 if(!KeyChecker.IS_CONTROL_PRESSED)
                     ImportedView.setSelected(comp);
                 else
-                    AnimationMenu.addAnimation(comp.getName());				
+                    AnimationMenu.addImageToAnimation(comp);
 			}
 		});
-        
-        
     }
 
     public void addCreation()

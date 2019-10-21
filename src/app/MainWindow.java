@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import app.Animation.AnimationMenu;
+import app.Animation.AnimationViewer;
 import app.base.FilterableOptionsView;
 import app.file.Loader;
 import app.file.Saver;
@@ -129,7 +130,11 @@ public class MainWindow extends JFrame
 		AnimationMenu.addTo(menuBar);
 
 		JMenuItem mntmAnimationView = new JMenuItem("Animation View");
-        mnNewMenuView.add(mntmAnimationView);
+		mnNewMenuView.add(mntmAnimationView);
+
+		
+		AnimationViewer.startAnimationView();
+	
 
         mntmAnimationView.addActionListener(new ActionListener()
         {

@@ -1,50 +1,92 @@
 package app.Animation;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AnimationViewer extends JDialog
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class AnimationViewer extends JPanel
 {
 
-    private int speed = 16;
-    private int frameCounter = 0;
-    private int currentFrame = 0;
-    public String animationName;
-    private List<BufferedImage> animationFrames = new ArrayList<BufferedImage>();
+    private int speed = 32;
+    private volatile int frameCounter = 0;
+    private volatile int currentFrame = 0;
+    public String currentAnimationName;
+
+
+    public static AnimationViewer instance;
+    private AnimationItem item;
+
     private JLabel currentImageName;
-    private JPanel imageView;
 
-    private AnimationFrame activeAnimationFrame;
+    private AnimationFrame activeAnimationFrame = null;
+    private List<AnimationFrame> animationFrames = new ArrayList<AnimationFrame>();
 
-    private List<AnimationFrame> imageBuffer = new ArrayList<AnimationFrame>();
+    private static boolean scheduledUpdate = false;
+    private static String scheduledName = "";
+    private static List<BufferedImage> scheduledBufferedImages = new ArrayList<BufferedImage>();
 
-    AnimationViewer(Frame owner, String animationName)
+
+    private AnimationViewer()
     {
-        super(owner, animationName);
-        this.animationName = animationName;
-        currentImageName = new JLabel();
-        imageView = new JPanel();
-        add(imageView);
-        imageView.add(currentImageName);
+        super(true);
+        currentImageName = new JLabel("Animation ");
+        currentImageName.setForeground(Color.WHITE);
+        add(currentImageName);
 
+        Thread t = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    if(canUpdate())
+                        updateFrame();
+                    if(scheduledUpdate)
+                        setAnimationFrames(scheduledBufferedImages, scheduledName);
+                        
+                }
+            }
+        });
+        t.start();
+    }
+
+    public boolean canUpdate()
+    {
+        return(instance.animationFrames.size() != 0);
+    }
+
+    public static void startAnimationView()
+    {
+        if(instance == null)
+            instance = new AnimationViewer();
+    }
+
+    public static void setAnimation(AnimationItem item)
+    {
+        instance.item = item;
+        setAnimationFramesSchedule(item.getAnimationFrames(), item.animationName);
     }
 
     private void changeFrame(int frameNumber)
     {
         if(activeAnimationFrame != null)
-            imageView.remove(activeAnimationFrame);
-        activeAnimationFrame = imageBuffer.get(frameNumber);
-        imageView.add(activeAnimationFrame);
-        validate();
+            remove(activeAnimationFrame);
+ 
+        activeAnimationFrame = animationFrames.get(frameNumber);
+        add(activeAnimationFrame);
     }
 
     private void nextImage()
     {
-        currentImageName.setText(animationName + currentFrame);
+        currentImageName.setText(currentAnimationName + "_" + currentFrame);
         changeFrame(currentFrame);
+        if(this.isVisible())
+            repaint();
     }
 
     private void updateFrame()
@@ -52,39 +94,41 @@ public class AnimationViewer extends JDialog
         frameCounter++;
         frameCounter%= speed;
         if(frameCounter == 0)
-        { 
+        {
             currentFrame++;
             currentFrame%= animationFrames.size();
             nextImage();
         }
     }
 
-    public void addAnimationFrame(BufferedImage frame)
+    private void addAnimationFrame(BufferedImage frame)
     {
-        animationFrames.add(frame);
-        imageBuffer.add(new AnimationFrame(frame));
+        animationFrames.add(new AnimationFrame(frame));
     }
-    public void addAnimationFrames(List<BufferedImage> frames)
-    {
-        animationFrames.addAll(frames);
 
+    private void addAnimationFrames(List<BufferedImage> frames)
+    {
         for(BufferedImage frame : frames)
-        {
-            imageBuffer.add(new AnimationFrame(frame));
-        }
+            addAnimationFrame(frame);
     }
 
-    public void setAnimationFrame(BufferedImage frame, String animationName)
+    public static void setAnimationFramesSchedule(List<BufferedImage> frames, String animationName)
     {
-        this.animationName = animationName;
-        animationFrames.clear();
-        addAnimationFrame(frame);
+        scheduledName = animationName;
+        scheduledBufferedImages = frames;
+        scheduledUpdate = true;
     }
 
-    public void setAnimationFrames(List<BufferedImage> frames, String animationName)
+    private void setAnimationFrames(List<BufferedImage> frames, String animationName)
     {
-        this.animationName = animationName;
+        currentAnimationName = animationName;
+        if(activeAnimationFrame != null)
+            remove(activeAnimationFrame);
+        currentFrame = 0;
+        frameCounter = 0;
         animationFrames.clear();
         addAnimationFrames(frames);
+        scheduledUpdate = false;
     }
+
 }
