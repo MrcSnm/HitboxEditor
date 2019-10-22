@@ -69,11 +69,13 @@ public class UIDefaults
         UIManager.put("Panel.background", BIT_DARKER_GRAY);
         UIManager.put("Panel.foreground", BIT_DARKER_GRAY);
         UIManager.put("SplitPane.dividerSize", 5);
+        UIManager.put("SplitPane.background", DARKER_GRAY);
     }
 
     private static void setScrollPaneDefault()
     {
         UIManager.put("ScrollPane.background", Color.DARK_GRAY);
+        UIManager.put("InternalFrame.background", DARKER_GRAY);
         UIManager.put("ScrollBar.background", Color.DARK_GRAY);
         UIManager.put("ScrollBar.foreground", Color.WHITE);
     }
@@ -120,11 +122,18 @@ public class UIDefaults
 
     private static void setTableDefault()
     {
-        UIManager.put("TableHeader.background", BIT_DARKER_GRAY);
-        UIManager.put("TableHeader.foreground", Color.WHITE);
         UIManager.put("Table.background", Color.DARK_GRAY);
+        UIManager.put("TableHeader.background", Color.BLACK);
         UIManager.put("Table.selectionBackground", new Color(255, 0, 0, 100));
+        UIManager.put("Viewport.background", DARKER_GRAY);
+        UIManager.put("Viewport.foreground", Color.DARK_GRAY);
+
+        UIManager.put("TableHeader.foreground", Color.WHITE);
         UIManager.put("Table.foreground", Color.WHITE);
         UIManager.put("Table.selectionForeground", Color.WHITE);
+
+        UIManager.put("Table.focusCellBackground", Color.DARK_GRAY);
+
+        UIManager.put("List.background", Color.DARK_GRAY);
     }
 }

@@ -141,7 +141,7 @@ public class MainWindow extends JFrame
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                FilterableOptionsView.startFilterableOptionsView();
+                FilterableOptionsView.startFilterableOptionsView(window);
             }
         });
 

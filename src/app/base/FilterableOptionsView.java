@@ -2,10 +2,12 @@ package app.base;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -23,8 +26,10 @@ import javax.swing.table.DefaultTableModel;
 
 import app.ImageComponent;
 import app.Animation.AnimationItem;
+import app.Animation.AnimationMenu;
 import app.Animation.AnimationViewer;
 import app.global.Globals;
+import app.global.UIDefaults;
 
 public class FilterableOptionsView 
 {
@@ -44,11 +49,31 @@ public class FilterableOptionsView
     JSplitPane splitPane;
     JPanel panel;
 
-    private FilterableOptionsView() {
-        dialog = new JDialog((Frame) null, "Animation View");
+    private FilterableOptionsView(Window t) 
+    {
+        dialog = new JDialog(t, "Animation View");
+        
+      
 
-        tab = new JTable(new DefaultTableModel(new Object[]{"Frames"}, 0));
+        tab = new JTable(new DefaultTableModel(new Object[]{"Frames"}, 0)
+        {
+            @Override
+            public boolean isCellEditable(int row, int col)
+            {
+                return false;
+            }
+        });
+        Globals.addKeyListener(tab, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0).toString(), "hideEscape", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                dialog.setVisible(false);
+            }
+        });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setBackground(UIDefaults.DARKER_GRAY);
+        centerRenderer.setForeground(UIDefaults.DARKER_GRAY);
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         tab.setDefaultRenderer(String.class, centerRenderer);
 
@@ -116,26 +141,29 @@ public class FilterableOptionsView
         addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         scrollPane = new JScrollPane(tab);
-        // addRow("Teste");
         
+        // addRow("Teste");
         this.addToDialog();   
     }
 
-    public static void startFilterableOptionsView()
+    public static void startFilterableOptionsView(Window f)
     {
         if(instance == null)
         {
             loopOn = new ImageIcon(Globals.createImage("loopOn.png", "Toggles loop"));
             loopOff = new ImageIcon(Globals.createImage("loopOff.png", "Toggles loop"));
-            instance = new FilterableOptionsView();
+            instance = new FilterableOptionsView(f);
         }
         else
             instance.dialog.setVisible(true);
+        AnimationItem item = AnimationMenu.getCurrentAnimation();
+        if(item != null)
+            setTableToAnimation(item);
     }
 
     public static void setFrameSelected(int frameNumber)
     {
-        if(tab != null)
+        if(tab != null && tab.getSelectedRow() != frameNumber)
         {
             tab.clearSelection();
             tab.setRowSelectionInterval(frameNumber, frameNumber);

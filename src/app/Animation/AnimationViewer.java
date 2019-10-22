@@ -30,7 +30,7 @@ public class AnimationViewer extends JPanel
 
     private static boolean scheduledUpdate = false;
 
-    public static boolean IS_STOPPED = false;
+    public static boolean IS_STOPPED = true;
     public static boolean IS_LOOPING = true;
 
     private static String scheduledName = "";
@@ -139,6 +139,7 @@ public class AnimationViewer extends JPanel
                 @Override
                 public void run()
                 {
+                    an.revalidate();
                     an.repaint();
                 }
             });
