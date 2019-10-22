@@ -12,7 +12,7 @@ import app.ImageComponent;
 public class AnimationItem extends JMenuItem
 {
 
-    private List<ImageComponent> imgComponents = new ArrayList<ImageComponent>();
+    public List<ImageComponent> imgComponents = new ArrayList<ImageComponent>();
     public String animationName;
 
     public AnimationItem(String animName)

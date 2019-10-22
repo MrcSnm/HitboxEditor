@@ -38,8 +38,7 @@ public class AnimationFrame extends JComponent
     {
         super.paintComponent(g);
         //g.drawImage(this.image, (int)(x + anchorX * width), (int)(y + anchorY * height), null);
-        g.drawImage(this.image, 0, 0, null);
-        System.out.println("Draw Image");
+        g.drawImage(this.image, (int)(anchorX * width), (int)(anchorY * height), null);
 
     }
 }

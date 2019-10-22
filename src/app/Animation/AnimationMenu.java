@@ -106,7 +106,7 @@ public class AnimationMenu extends JMenu
         {
             selectedItem.addImageComp(img);
             AnimationViewer.setAnimation(selectedItem);
-            
+            FilterableOptionsView.setTableToAnimation(selectedItem);
         }
     }
 }

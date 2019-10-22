@@ -21,6 +21,7 @@ public class UIDefaults
         setPanelDefault();
         setOptionPaneDefault();
         setButtonDefault();
+        setScrollPaneDefault();
 
         setMenuBarDefault();
         setMenuDefault();
@@ -30,6 +31,7 @@ public class UIDefaults
 
         setTextAreaDefault();
         setTextFieldDefault();
+        setTableDefault();
     }
 
     private static void setOptionPaneDefault()
@@ -66,8 +68,16 @@ public class UIDefaults
     {
         UIManager.put("Panel.background", BIT_DARKER_GRAY);
         UIManager.put("Panel.foreground", BIT_DARKER_GRAY);
-
+        UIManager.put("SplitPane.dividerSize", 5);
     }
+
+    private static void setScrollPaneDefault()
+    {
+        UIManager.put("ScrollPane.background", Color.DARK_GRAY);
+        UIManager.put("ScrollBar.background", Color.DARK_GRAY);
+        UIManager.put("ScrollBar.foreground", Color.WHITE);
+    }
+
     private static void setMenuBarDefault()
     {
         UIManager.put("MenuBar.foreground", SystemColor.textHighlight);
@@ -106,5 +116,15 @@ public class UIDefaults
         UIManager.put("CheckBoxMenuItem.foreground", Color.WHITE);
         UIManager.put("CheckBoxMenuItem.acceleratorForeground", Color.RED);
         UIManager.put("CheckBoxMenuItem.acceleratorSelectionForeground", Color.RED);
+    }
+
+    private static void setTableDefault()
+    {
+        UIManager.put("TableHeader.background", BIT_DARKER_GRAY);
+        UIManager.put("TableHeader.foreground", Color.WHITE);
+        UIManager.put("Table.background", Color.DARK_GRAY);
+        UIManager.put("Table.selectionBackground", new Color(255, 0, 0, 100));
+        UIManager.put("Table.foreground", Color.WHITE);
+        UIManager.put("Table.selectionForeground", Color.WHITE);
     }
 }

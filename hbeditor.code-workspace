@@ -7,6 +7,21 @@
 	],
 	"settings": {
 		"editor.tabSize": 4,
-		"editor.autoIndent": true
+		"editor.autoIndent": true,
+		"files.exclude": 
+		{
+			".gitignore" : true,
+			".project" : true,
+			".classpath" : true,
+			"LICENSE" : true,
+			"README.md" : true,
+			"bin" : true,
+			".settings" : true,
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true
+		}
 	}
 }
