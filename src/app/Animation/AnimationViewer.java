@@ -47,7 +47,8 @@ public class AnimationViewer extends JPanel
         Thread t = new Thread(new Runnable() 
         {
             @Override
-            public void run() {
+            public void run() 
+            {
                 while (true) 
                 {
                     if(!IS_STOPPED)
@@ -65,7 +66,11 @@ public class AnimationViewer extends JPanel
                             catch (InterruptedException e) {e.printStackTrace();}
                         }
                     }
-                    //System.out.println(16.6 - miliDt);
+                    else
+                    {
+                        try {Thread.sleep((long) (300));}
+                        catch (InterruptedException e) {e.printStackTrace();}
+                    }
                 }
             }
         });
@@ -126,6 +131,7 @@ public class AnimationViewer extends JPanel
         if(IS_STOPPED)
             instance.changeFrame(frameNumber);
         instance.currentFrame = frameNumber;
+        System.out.println("Change");
     }
 
     private void nextImage()

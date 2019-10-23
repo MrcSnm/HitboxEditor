@@ -28,7 +28,8 @@ import app.global.Globals;
 import app.global.KeyChecker;
 import app.global.UIDefaults;
 
-public class ImportedView extends JScrollPane {
+public class ImportedView extends JScrollPane 
+{
     public Editor editorRef;
     public Map<String, ImageComponent> images;
     public JPanel panel;
@@ -44,7 +45,8 @@ public class ImportedView extends JScrollPane {
     private List<AtomicReference<Float>> scheduledPivotX = new ArrayList<AtomicReference<Float>>();
     private List<AtomicReference<Float>> scheduledPivotY = new ArrayList<AtomicReference<Float>>();
 
-    public static void setSelected(ImageComponent img) {
+    public static void setSelected(ImageComponent img) 
+    {
         if (img == currentSelected)
             return;
         if (currentSelected != null)
@@ -59,37 +61,38 @@ public class ImportedView extends JScrollPane {
         img.repaint();
     }
 
-    private static void unselect() {
+    private static void unselect() 
+    {
         currentSelected.setForeground(Color.WHITE);
         currentSelected.setOpaque(false);
         currentSelected.repaint();
         currentSelected = null;
     }
 
-    public void scheduleCreation(List<Box> hitboxes, List<Box> hurtboxes, AtomicReference<Float> scheduledPX,
-            AtomicReference<Float> scheludedPY, String imageName) {
+    public void scheduleCreation(List<Box> hitboxes, List<Box> hurtboxes, AtomicReference<Float> scheduledPX, AtomicReference<Float> scheludedPY, String imageName) 
+    {
         scheduledHitboxes.add(hitboxes);
         scheduledHurtboxes.add(hurtboxes);
         scheduledPivotX.add(scheduledPX);
         scheduledPivotY.add(scheludedPY);
-        try {
-            scheduledFiles.add(new File(imageName));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try {scheduledFiles.add(new File(imageName));}
+        catch (Exception e) {e.printStackTrace();}
     }
 
-    public void executeScheduled() {
+    public void executeScheduled() 
+    {
         File[] files = scheduledFiles.toArray(new File[scheduledFiles.size()]);
         scheduledFiles.clear();
         addImportedImages(files);
     }
 
-    public void tryLoadOperation(String path) {
+    public void tryLoadOperation(String path) 
+    {
         Loader.loadProject(Paths.get(path).toString(), this);
     }
 
-    public ImportedView(Editor editor) {
+    public ImportedView(Editor editor) 
+    {
         super();
         if (ref == null)
             ref = this;
@@ -113,16 +116,7 @@ public class ImportedView extends JScrollPane {
         j.setStringPainted(true);
         setViewportView(panel);
 
-        Globals.addKeyListenerIgnore(this, "W", "UP", new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                if(KeyChecker.IS_CONTROL_PRESSED)
-                    System.out.println("Teste");
-            }
-        });
-
+        
         imageProgress = new ImageProgress(j);
         imageProgress.setOnCompleteHandler(new Callable<String>()
         {

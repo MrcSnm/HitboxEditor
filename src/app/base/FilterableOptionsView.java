@@ -82,8 +82,8 @@ public class FilterableOptionsView
             @Override
             public void valueChanged(ListSelectionEvent e) 
             {
-                if(tab.getSelectedRow() != -1)
-                    AnimationViewer.globalChangeFrame(tab.getSelectedRow());
+                //if(tab.getSelectedRow() != -1)
+                  //  AnimationViewer.globalChangeFrame(tab.getSelectedRow());
             }
         });
         
