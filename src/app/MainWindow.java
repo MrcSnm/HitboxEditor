@@ -2,9 +2,6 @@ package app;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,7 +11,6 @@ import java.nio.file.Paths;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -33,17 +29,11 @@ import app.file.Saver;
 import app.global.Globals;
 import app.global.KeyChecker;
 import app.global.UIDefaults;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
-import java.awt.GridLayout;
 import java.awt.Component;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.SwingConstants;
-import java.awt.Window.Type;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalExclusionType;
 
 public class MainWindow extends JFrame 
 {

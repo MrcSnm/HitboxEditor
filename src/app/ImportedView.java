@@ -1,7 +1,6 @@
 package app;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -145,8 +144,7 @@ public class ImportedView extends JScrollPane
                         Box hurtbox = im.addHurtbox();
                         imHurtboxes.get(i).copyInto(hurtbox);
                     }
-                    im.anchorX = scheduledPivotX.get(0).get();
-                    im.anchorY = scheduledPivotY.get(0).get();
+                    im.setAnchor(scheduledPivotX.get(0).get(), scheduledPivotY.get(0).get());
                     ref.scheduledHurtboxes.remove(0);
                     ref.scheduledHitboxes.remove(0);
                     ref.scheduledPivotX.remove(0);

@@ -12,7 +12,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import app.Animation.AnimationItem;
+
+import app.base.AnchorPoint;
 import app.Animation.AnimationMenu;
 import app.global.KeyChecker;
 
@@ -20,9 +21,11 @@ public class ImageComponent extends JLabel
 {
     public List<Box> hitboxes;
     public List<Box> hurtboxes;
-    public float anchorX = .5f;
-    public float anchorY = .5f;
+    public AnchorPoint anchor;
+
+
     public BufferedImage texture;
+
     public String absolutePath;
 
     public String imgName;
@@ -32,6 +35,7 @@ public class ImageComponent extends JLabel
     ImageComponent(String name, BufferedImage image)
     {
         super(name);
+        anchor = new AnchorPoint(this);
         hitboxes = new ArrayList<Box>();
         hurtboxes = new ArrayList<Box>();
         
@@ -46,6 +50,8 @@ public class ImageComponent extends JLabel
         setIconTextGap(15);
         setForeground(Color.WHITE);
         setBorder(BorderFactory.createLineBorder(Color.WHITE));
+
+        //add(anchor);
         
         ImageComponent comp = this;
         addMouseListener(new MouseAdapter() 
@@ -144,8 +150,7 @@ public class ImageComponent extends JLabel
 
     public void setAnchor(float x, float y)
     {
-        anchorX = x;
-        anchorY = y;
+        this.anchor.setAnchor(x, y);
     }
 
     public void deleteHitbox(Box b)

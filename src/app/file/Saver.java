@@ -31,7 +31,7 @@ public class Saver
             String path = CrossPlatformFunctions.convertDirToOS(buffer.absolutePath).replaceAll("\\\\", "/");
             saveString+= "\"" + buffer.imgName + "\" : " + "\n\t{\n";
             saveString+= "\t\t" + "\"absolutePath\" : \"" + path + "\",\n";
-            saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + (float)buffer.anchorX + ", \"y\" : " + (float)buffer.anchorY + "},\n";
+            saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + (float)buffer.anchor.x + ", \"y\" : " + (float)buffer.anchor.y + "},\n";
             saveString+= "\t\t" + addBox("hitboxes", buffer.hitboxes) + ",\n";
             saveString+= "\t\t" + addBox("hurtboxes", buffer.hurtboxes);
             saveString+="\n\t},\n";

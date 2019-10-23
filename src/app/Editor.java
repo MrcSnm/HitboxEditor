@@ -13,6 +13,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import app.base.AnchorPoint;
+
 public class Editor extends JScrollPane
 {
     public Box currentCreating;
@@ -205,8 +207,7 @@ public class Editor extends JScrollPane
     {
         if(editingComponent != null)
         {
-            editingComponent.anchorX = (float)editingComponent.texture.getWidth() / x;
-            editingComponent.anchorY = (float)editingComponent.texture.getHeight() / y;
+            editingComponent.setAnchor((float)editingComponent.texture.getWidth() / x, (float)editingComponent.texture.getHeight() / y);
         }
     }
 
@@ -220,6 +221,7 @@ public class Editor extends JScrollPane
                 imageView.remove(hurtbox);
             imageView.setIcon(null);
             imageView.setDisabledIcon(null);
+            imageView.remove(ic.anchor);
         }
         editingComponent = ic;
 
@@ -233,11 +235,14 @@ public class Editor extends JScrollPane
             imageView.add(hurtbox);
             getViewport().validate();
         }
+        imageView.add(ic.anchor);
+        getViewport().validate();
         imageView.setIcon(new ImageIcon(editingComponent.texture));
         imageView.setDisabledIcon(new ImageIcon(editingComponent.texture));
         updateBounds();
         panel.setPreferredSize(new Dimension(ic.texture.getWidth() + 400, ic.texture.getHeight() + 200));
         getViewport().validate();
+        System.out.println(AnchorPoint.img);
     }
 
 
@@ -280,7 +285,7 @@ public class Editor extends JScrollPane
                 }
                 saveString+= "\n\t\t\t]";
             }
-            saveString+= "\n\t\t\"pivot\" : {\"x\" : " + edited.anchorX + ", \"y\" : " + edited.anchorY + "}";
+            saveString+= "\n\t\t\"pivot\" : {\"x\" : " + edited.anchor.x + ", \"y\" : " + edited.anchor.y + "}";
         }
 
         saveString+= "\n}";
