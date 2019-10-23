@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.SystemColor;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
@@ -18,6 +19,7 @@ public class UIDefaults
 
     public static void setUIDefaults()
     {
+    	setFrameDefault();
         setPanelDefault();
         setOptionPaneDefault();
         setButtonDefault();
@@ -32,6 +34,13 @@ public class UIDefaults
         setTextAreaDefault();
         setTextFieldDefault();
         setTableDefault();
+    }
+    
+    private static void setFrameDefault()
+    {
+    	UIManager.put("activeCaption", Color.BLACK);
+    	
+    	
     }
 
     private static void setOptionPaneDefault()

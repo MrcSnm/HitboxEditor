@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 public class ZoomablePanel extends JPanel 
 {
     public float currentZoom = 1.0f;
+    private float scrollAmount = .05f;
 
     public ZoomablePanel() 
     {
@@ -19,6 +20,15 @@ public class ZoomablePanel extends JPanel
             {
                 if (!KeyChecker.IS_CONTROL_PRESSED)
                     return;
+                if(e.getWheelRotation() > 0)
+                {
+                	currentZoom+= scrollAmount;
+                }
+                else
+                {
+                	if(currentZoom - scrollAmount > 0)
+                		currentZoom-= scrollAmount;
+                }
                 revalidate();
                 repaint();
             }

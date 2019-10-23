@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,6 +33,17 @@ import app.file.Saver;
 import app.global.Globals;
 import app.global.KeyChecker;
 import app.global.UIDefaults;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import java.awt.GridLayout;
+import java.awt.Component;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.SwingConstants;
+import java.awt.Window.Type;
+import java.awt.Toolkit;
+import java.awt.Dialog.ModalExclusionType;
 
 public class MainWindow extends JFrame 
 {
@@ -101,13 +113,15 @@ public class MainWindow extends JFrame
 	 */
 	public MainWindow() 
 	{
+		setBackground(Color.BLACK);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/app/icon.png")));
 
 		setForeground(Color.BLACK);
 		setTitle("HitboxEditor by Hipreme");		
 
 		final MainWindow window = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 609, 476);
+		setBounds(100, 100, 948, 597);
 
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBorder(BorderFactory.createLineBorder(new Color(0xccccff), 2, true));
@@ -160,113 +174,100 @@ public class MainWindow extends JFrame
 		contentPane.setForeground(UIDefaults.DARKER_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
-
-
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
-
-		final Editor editor = new Editor();
-		//editor.panel.setBorder(null);
-		//editor.panel.setBa
-		editor.panel.setBackground(Color.DARK_GRAY);
-		editor.setBackground(Color.GRAY);
-		GridBagConstraints gbc_editor = new GridBagConstraints();
-		gbc_editor.fill = GridBagConstraints.BOTH;
-		gbc_editor.gridx = 1;
-		gbc_editor.gridy = 1;
-
-		contentPane.add(editor, gbc_editor);
-
-
-        final ImportedView scrollPane = new ImportedView(editor);
-        scrollPane.tryLoadOperation(MainWindow.scheduledProject);
-		scrollPane.panel.setBackground(Color.DARK_GRAY);
-		scrollPane.setBackground(Color.GRAY);
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 1;
-		gbc_scrollPane.gridy = 13;
-
-		contentPane.add(scrollPane, gbc_scrollPane);
-
-
-
-		JButton btnNewButton = new JButton("Import Images");
-		btnNewButton.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent e) 
-			{
-				File[] f = CrossPlatformFunctions.crossPlatformSelectMulti("Select images/frames to create hitbox", "png");
-				if(f != null && f.length != 0)
-					scrollPane.addImportedImages(f);
-			}
-		});
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 0;
-		contentPane.add(btnNewButton, gbc_btnNewButton);
-
-		JButton btnNewButton_2 = new JButton("Hitbox");
-		btnNewButton_2.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent e) 
-			{
-				MainWindow.currentMode = MainWindow.MODE.HITBOX;
-			}
-		});
-		GridBagConstraints gbc_btnNewButton_2 = new GridBagConstraints();
-		gbc_btnNewButton_2.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton_2.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_2.gridx = 0;
-		gbc_btnNewButton_2.gridy = 1;
-		contentPane.add(btnNewButton_2, gbc_btnNewButton_2);
-
-		JButton btnHurtbox = new JButton("Hurtbox");
-		btnHurtbox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				MainWindow.currentMode = MainWindow.MODE.HURTBOX;
-			}
-		});
-		GridBagConstraints gbc_btnHurtbox = new GridBagConstraints();
-		gbc_btnHurtbox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnHurtbox.insets = new Insets(0, 0, 5, 5);
-		gbc_btnHurtbox.gridx = 0;
-		gbc_btnHurtbox.gridy = 2;
-		contentPane.add(btnHurtbox, gbc_btnHurtbox);
-
-		JButton btnNewButton_1 = new JButton("Anchor");
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				MainWindow.currentMode = MainWindow.MODE.ANCHOR;
-			}
-		});
-		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
-		gbc_btnNewButton_1.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNewButton_1.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton_1.gridx = 0;
-		gbc_btnNewButton_1.gridy = 3;
-		contentPane.add(btnNewButton_1, gbc_btnNewButton_1);
-
-		JButton btnPointer = new JButton("Pointer");
-		btnPointer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				MainWindow.currentMode = MainWindow.MODE.POINTER;
-			}
-		});
-		GridBagConstraints gbc_btnPointer = new GridBagConstraints();
-		gbc_btnPointer.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnPointer.insets = new Insets(0, 0, 5, 5);
-		gbc_btnPointer.gridx = 0;
-		gbc_btnPointer.gridy = 4;
-		contentPane.add(btnPointer, gbc_btnPointer);
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
+														                        
+            JPanel buttonContainer = new JPanel();
+            contentPane.add(buttonContainer);
+            buttonContainer.setAlignmentX(0.0f);
+            buttonContainer.setAlignmentY(Component.TOP_ALIGNMENT);
+            
+            
+            
+            		JButton btnImport = new JButton("Import Images");
+            		
+			
+					JButton btnHitbox = new JButton("Hitbox");
+					btnHitbox.addActionListener(new ActionListener() 
+					{
+						public void actionPerformed(ActionEvent e) 
+						{
+							MainWindow.currentMode = MainWindow.MODE.HITBOX;
+						}
+					});
+					
+							JButton btnHurtbox = new JButton("Hurtbox");
+							btnHurtbox.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent e) 
+								{
+									MainWindow.currentMode = MainWindow.MODE.HURTBOX;
+								}
+							});
+							
+									JButton btnNewButton_1 = new JButton("Anchor");
+									btnNewButton_1.addActionListener(new ActionListener() {
+										public void actionPerformed(ActionEvent e) 
+										{
+											MainWindow.currentMode = MainWindow.MODE.ANCHOR;
+										}
+									});
+									
+											JButton btnPointer = new JButton("Pointer");
+											GroupLayout gl_buttonContainer = new GroupLayout(buttonContainer);
+											gl_buttonContainer.setAutoCreateContainerGaps(true);
+											gl_buttonContainer.setHonorsVisibility(false);
+											int btnImpWid = btnImport.getPreferredSize().width;
+											gl_buttonContainer.setHorizontalGroup(
+												gl_buttonContainer.createParallelGroup(Alignment.LEADING)
+													.addComponent(btnImport, GroupLayout.PREFERRED_SIZE, btnImpWid, GroupLayout.PREFERRED_SIZE)
+													.addComponent(btnHitbox, GroupLayout.PREFERRED_SIZE, btnImpWid, GroupLayout.PREFERRED_SIZE)
+													.addComponent(btnHurtbox, GroupLayout.PREFERRED_SIZE, btnImpWid, GroupLayout.PREFERRED_SIZE)
+													.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, btnImpWid, GroupLayout.PREFERRED_SIZE)
+													.addComponent(btnPointer, GroupLayout.PREFERRED_SIZE, btnImpWid, GroupLayout.PREFERRED_SIZE)
+											);
+											gl_buttonContainer.setVerticalGroup(
+												gl_buttonContainer.createParallelGroup(Alignment.LEADING)
+													.addGroup(gl_buttonContainer.createSequentialGroup()
+														.addComponent(btnImport, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+														.addGap(5)
+														.addComponent(btnHitbox, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+														.addGap(5)
+														.addComponent(btnHurtbox, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+														.addGap(5)
+														.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+														.addGap(5)
+														.addComponent(btnPointer, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+											);
+											buttonContainer.setLayout(gl_buttonContainer);
+											btnPointer.addActionListener(new ActionListener() {
+												public void actionPerformed(ActionEvent e) 
+												{
+													MainWindow.currentMode = MainWindow.MODE.POINTER;
+												}
+											});
+            												
+            
+            JPanel panel = new JPanel();
+            contentPane.add(panel);
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            
+            		final Editor editor = new Editor();
+            		panel.add(editor);
+            		//editor.panel.setBorder(null);
+            		//editor.panel.setBa
+            		editor.panel.setBackground(Color.DARK_GRAY);
+            		editor.setBackground(Color.GRAY);
+            		final ImportedView scrollPane = new ImportedView(editor);
+            		scrollPane.tryLoadOperation(MainWindow.scheduledProject);
+            		panel.add(scrollPane);
+            		btnImport.addActionListener(new ActionListener() 
+					{
+						public void actionPerformed(ActionEvent e) 
+						{
+							File[] f = CrossPlatformFunctions.crossPlatformSelectMulti("Select images/frames to create hitbox", "png");
+							if(f != null && f.length != 0)
+								scrollPane.addImportedImages(f);
+						}
+					});
 
 		mntmSave.addActionListener(new ActionListener()
 		{

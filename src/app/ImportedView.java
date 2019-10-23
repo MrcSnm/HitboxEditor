@@ -3,7 +3,6 @@ package app;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -16,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -24,8 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import app.file.Loader;
-import app.global.Globals;
-import app.global.KeyChecker;
 import app.global.UIDefaults;
 
 public class ImportedView extends JScrollPane 
@@ -100,8 +96,8 @@ public class ImportedView extends JScrollPane
         images = new HashMap<String, ImageComponent>();
         setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
         panel = new JPanel(true);
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-        panel.setPreferredSize(new Dimension(250, 100));
+        panel.setLayout(new FlowLayout(FlowLayout.LEADING, 3, 3));
+        
 
         dialog = new JDialog((JDialog) null, "Load");
         dialog.setBackground(UIDefaults.DARKER_GRAY);
@@ -114,10 +110,13 @@ public class ImportedView extends JScrollPane
         j.setMaximum(100);
         j.setMinimum(0);
         j.setStringPainted(true);
-        setViewportView(panel);
+        setViewportBorder(new LineBorder(new Color(0x1e1e1e)));
+    	setViewportView(panel);
+    	validate();
 
         
         imageProgress = new ImageProgress(j);
+        ImportedView imp = this;
         imageProgress.setOnCompleteHandler(new Callable<String>()
         {
             @Override
@@ -156,6 +155,7 @@ public class ImportedView extends JScrollPane
                 images.put(name,im);
                 panel.add(im, null);
                 panel.validate();
+                imp.validate();
                 return name;
             }
         });
