@@ -7,11 +7,13 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Image;
+
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 public class AnchorPoint extends JComponent
 {
-    public static Image img = null;
+    public static Image img = Globals.createImage("anchor.png", "Anchor Point");;
     public float x = .5f;
     public float y = .5f;
     private ImageComponent target;
@@ -19,8 +21,6 @@ public class AnchorPoint extends JComponent
     public AnchorPoint(ImageComponent target)
     {
         super();
-        if(img == null)
-            img= Globals.createImage("anchor.png", "Anchor Point");
         this.target = target;
     }
 
@@ -28,6 +28,8 @@ public class AnchorPoint extends JComponent
     {
         this.x = x;
         this.y = y;
+
+        this.setBounds((int)(this.target.getX() + this.target.getWidth() * x), (int)(this.target.getY() + this.target.getHeight() * y), 40, 40);
     }
 
     @Override
@@ -49,7 +51,6 @@ public class AnchorPoint extends JComponent
        super.getBounds(r);
        r.width = img.getWidth(this);
        r.height = img.getHeight(this);
-       System.out.println(r.width + " " + r.height);
        return r;  
     }
 }

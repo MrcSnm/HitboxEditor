@@ -14,9 +14,12 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import app.base.AnchorPoint;
+import app.base.Inspector;
 
 public class Editor extends JScrollPane
 {
+
+    public Box selectedBox = null;
     public Box currentCreating;
     public List<ImageComponent> editedComponents = new ArrayList<ImageComponent>();
     public ImageComponent editingComponent;
@@ -24,9 +27,12 @@ public class Editor extends JScrollPane
     public MainWindow.MODE currentMode = MainWindow.MODE.POINTER;
     public JButton imageView;
 
-    public Editor()
+    private Inspector inspector;
+
+    public Editor(Inspector inspector)
     {
         super();
+        this.inspector = inspector;
         panel = new JPanel(true);
         imageView = new JButton();
         imageView.setEnabled(false);
@@ -90,11 +96,18 @@ public class Editor extends JScrollPane
 		                        imageView.add(currentCreating);
 		                        editor.getViewport().validate();
 		                        break;
-		                    case ANCHOR:
-		                        editor.setAnchor(e.getX(), e.getY());
+                            case ANCHOR:
+                                float anchorX = e.getX() / editingComponent.texture.getWidth();
+                                float anchorY = e.getY() / editingComponent.texture.getHeight();
+                                editingComponent.setAnchor(anchorX, anchorY);
+                                // System.out.println("AnchorX: " + anchorX + " AnchorY: " + anchorY);
+                                System.out.println("X: "+ normallizeX(e.getX()) + " Y: " + normallizeY(e.getY()));
 		                        //Anchor Set Position
 		                        break;
-		                    case POINTER:
+                            case POINTER:
+                                Box b = editingComponent.getBox(e.getX(), e.getY());
+                                if(b != null)
+                                    setSelectedBox(b);
 		                        break;
 		                }
 		            	break;
@@ -126,7 +139,7 @@ public class Editor extends JScrollPane
             							break;
             						}
             					}
-            					break;
+                                break;
         					default:
         						break;
             			}
@@ -216,35 +229,75 @@ public class Editor extends JScrollPane
         if(editingComponent != null)
         {
             for(Box hitbox : editingComponent.hitboxes)
+            {
+                hitbox.normallize(this);
+                System.out.println(hitbox);
                 imageView.remove(hitbox);
+            }
             for(Box hurtbox : editingComponent.hurtboxes)
+            {
+                hurtbox.normallize(this);
+                System.out.println(hurtbox);
                 imageView.remove(hurtbox);
+            }
             imageView.setIcon(null);
             imageView.setDisabledIcon(null);
             imageView.remove(ic.anchor);
         }
         editingComponent = ic;
 
-        for(Box hitbox : ic.hitboxes)
-        {
-            imageView.add(hitbox);
-            getViewport().validate();
-        }
-        for(Box hurtbox : ic.hurtboxes)
-        {
-            imageView.add(hurtbox);
-            getViewport().validate();
-        }
-        imageView.add(ic.anchor);
-        getViewport().validate();
+
         imageView.setIcon(new ImageIcon(editingComponent.texture));
         imageView.setDisabledIcon(new ImageIcon(editingComponent.texture));
         updateBounds();
         panel.setPreferredSize(new Dimension(ic.texture.getWidth() + 400, ic.texture.getHeight() + 200));
         getViewport().validate();
-        System.out.println(AnchorPoint.img);
+
+        for(Box hitbox : ic.hitboxes)
+        {
+            hitbox.unNormallize(this);
+            imageView.add(hitbox);
+            getViewport().validate();
+        }
+        for(Box hurtbox : ic.hurtboxes)
+        {
+            hurtbox.unNormallize(this);
+            imageView.add(hurtbox);
+            getViewport().validate();
+        }
+        imageView.add(ic.anchor);
+        getViewport().validate();
+        
+        //System.out.println(AnchorPoint.img);
     }
 
+    public int normallizeX(int X)
+    {
+        return X -(imageView.getWidth() - editingComponent.texture.getWidth()) / 2;
+    }
+
+    public int unNormallizeX(int X)
+    {
+        return X + (imageView.getWidth() - editingComponent.texture.getWidth()) / 2;
+    }
+
+    public int normallizeY(int Y)
+    {
+        return Y - (imageView.getHeight() - editingComponent.texture.getHeight()) / 2;
+    }
+
+    public int unNormallizeY(int Y)
+    {
+        return Y + (imageView.getHeight() - editingComponent.texture.getHeight()) / 2;
+    }
+
+    public void setSelectedBox(Box b)
+    {
+        if(selectedBox != null)
+            selectedBox.setSelected(false);
+        selectedBox = b.setSelected(true);
+        inspector.setTarget(b);
+    }
 
     public void saveEdited()
     {
@@ -270,7 +323,14 @@ public class Editor extends JScrollPane
                 saveString+= "\"hitboxes\" : \n\t\t\t[";
                 for(Box hitbox : edited.hitboxes)
                 {
-                    saveString+= "\n\t\t\t\t" + hitbox.getRectAsJSON();
+                    if(!hitbox.canSave())
+                    {
+                        hitbox.toggleNormallize(this);
+                        saveString+= "\n\t\t\t\t" + hitbox.getRectAsJSON();
+                        hitbox.toggleNormallize(this);
+                    }
+                    else
+                        saveString+= "\n\t\t\t\t" + hitbox.getRectAsJSON();
                 }
                 saveString+= "\n\t\t\t]";
             }
@@ -281,7 +341,14 @@ public class Editor extends JScrollPane
                 saveString+= "\"hurtboxes\" : \n\t\t\t[";
                 for(Box hurtbox : edited.hurtboxes)
                 {
-                    saveString+= "\n\t\t\t\t" + hurtbox.getRectAsJSON();
+                    if(!hurtbox.canSave())
+                    {
+                        hurtbox.toggleNormallize(this);
+                        saveString+= "\n\t\t\t\t" + hurtbox.getRectAsJSON();
+                        hurtbox.toggleNormallize(this);
+                    }
+                    else
+                        saveString+= "\n\t\t\t\t" + hurtbox.getRectAsJSON();
                 }
                 saveString+= "\n\t\t\t]";
             }

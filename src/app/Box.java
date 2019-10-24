@@ -1,16 +1,34 @@
 package app;
+
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.swing.*;
 import java.awt.Rectangle;
-public class Box extends JComponent
+import java.awt.Stroke;
+import java.awt.BasicStroke;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import app.base.Inspector;
+import app.base.InspectorTarget;
+import app.global.Callback;;
+
+public class Box extends JComponent implements InspectorTarget
 {
    public int RECT_X, RECT_Y, RECT_X_2, RECT_Y_2;
+   private boolean isNormallized = false;
+
 
    public int startX, startY;
+   private boolean isSelected = false;
+
+   public Color selectedBoxBorderColor;
+   public Color selectedBoxFillColor;
    public Color boxBorderColor;
    public Color boxFillColor;
    private List<Box> boxContainer;
@@ -22,19 +40,150 @@ public class Box extends JComponent
        RECT_Y = y;
        RECT_X_2 = X_2; 
        RECT_Y_2 = Y_2;
+
+       addMouseListener(new MouseAdapter()
+       {
+          @Override
+          public void mouseClicked(MouseEvent e)
+          {
+             System.out.println("Clicou numa box");
+          }
+       });
+   }
+
+   public void onTargeted(Inspector inspector)
+   {
+      Box b = this;
+      inspector.addTargetValue("X", new Callable<String>()
+      {
+         public String call()
+         {
+            return String.valueOf(b.RECT_X);
+         }
+      });
+
+      inspector.addTargetValue("Y", new Callable<String>()
+      {
+         public String call()
+         {
+            return String.valueOf(b.RECT_Y);
+         }
+      });
+
+      inspector.addTargetValue("WIDTH", new Callable<String>()
+      {
+         public String call()
+         {
+            return String.valueOf(b.RECT_X_2 - b.RECT_X);
+         }
+      });
+
+      inspector.addTargetValue("HEIGHT", new Callable<String>()
+      {
+         public String call()
+         {
+            return String.valueOf(b.RECT_Y_2 - b.RECT_Y);
+         }
+      });
+   }
+
+   public void onTargetedSetters(Inspector inspector)
+   {
+      Box b = this;
+      inspector.addTargetSetter("X", new Callback<Object>(new Integer(5))
+      {
+         public Void call()
+         {
+            b.RECT_X = (int)this.value;
+            return null;
+         }
+      });
+
+      inspector.addTargetSetter("Y", new Callback<Object>(new Integer(5))
+      {
+         public Void call()
+         {
+            b.RECT_Y = (int)this.value;
+            return null;
+         }
+      });
+
+      inspector.addTargetSetter("WIDTH", new Callback<Object>(new Integer(5))
+      {
+         public Void call()
+         {
+            b.RECT_X_2 = (int)this.value;
+            return null;
+         }
+      });
+
+      inspector.addTargetSetter("HEIGHT", new Callback<Object>(new Integer(5))
+      {
+         public Void call()
+         {
+            b.RECT_Y_2 = (int)this.value;
+            return null;
+         }
+      });
    }
    
-   
+   public String getTargetName()
+   {
+      return "Box";
+   }
+
    public Box(List<Box> container, JComponent parent)
    {
 	   boxContainer = container;
 	   boxParent = parent;	   
    }
-   
+
+   public void unNormallize(Editor editor)
+   {
+      if(!isNormallized)
+         return;
+      isNormallized = false;
+      RECT_X = editor.unNormallizeX(RECT_X);
+      RECT_Y = editor.unNormallizeY(RECT_Y);
+      RECT_X_2 = editor.unNormallizeX(RECT_X_2);
+      RECT_Y_2 = editor.unNormallizeY(RECT_Y_2);
+      setDefaultBounds();
+   }
+
+   public void normallize(Editor editor)
+   {
+      if(isNormallized)
+         return;
+      isNormallized = true;
+      RECT_X = editor.normallizeX(RECT_X);
+      RECT_Y = editor.normallizeY(RECT_Y);
+      RECT_X_2 = editor.normallizeX(RECT_X_2);
+      RECT_Y_2 = editor.normallizeY(RECT_Y_2);
+      setDefaultBounds();
+   }
+
+   public void toggleNormallize(Editor editor)
+   {
+      if(isNormallized)
+         unNormallize(editor);
+      else
+         normallize(editor);
+   }
+
+   public String toString()
+   {
+      return "X: " + RECT_X + " X_2: " + RECT_X_2 + " Y: " + RECT_Y + " Y_2: " + RECT_Y_2;
+   }
+
    
    public boolean pointIntersection(int x, int y)
    {
 	   return (x >= RECT_X && x <= RECT_X_2 && y>= RECT_Y && y<= RECT_Y_2);
+   }
+
+   public boolean canSave()
+   {
+      return isNormallized;
    }
    
    public void remove()
@@ -46,6 +195,14 @@ public class Box extends JComponent
    {
       startX = x;
       startY = y;
+   }
+
+   public Box setSelected(boolean selected)
+   {
+      this.isSelected = selected;
+      revalidate();
+      repaint();
+      return this;
    }
 
    public void setSizeByPoint(int x, int y)
@@ -73,6 +230,11 @@ public class Box extends JComponent
          RECT_Y_2 = y;
       }
       
+      setDefaultBounds();
+   }
+
+   public void setDefaultBounds()
+   {
       setBounds(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
    }
 
@@ -82,7 +244,16 @@ public class Box extends JComponent
       b.RECT_X_2 = this.RECT_X_2;
       b.RECT_Y = this.RECT_Y;
       b.RECT_Y_2 = this.RECT_Y_2;
-      b.setBounds(RECT_X, RECT_Y, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
+      setDefaultBounds();
+   }
+
+   /**
+    * Reserved for loading purposes
+    */
+   public void loadCopyInto(Box b)
+   {
+      copyInto(b);
+      b.isNormallized = true;
    }
 
    public String getRectAsJSON()
@@ -97,10 +268,19 @@ public class Box extends JComponent
    {
       super.paintComponent(g);
       // draw the rectangle here
-      g.setColor(boxFillColor);
+      g.setColor(((isSelected) ? selectedBoxFillColor : boxFillColor));
       g.fillRect(0, 0, RECT_X_2 - RECT_X, RECT_Y_2 - RECT_Y);
-      g.setColor(boxBorderColor);
-      g.drawRect(0, 0, (RECT_X_2 - RECT_X) - 1, (RECT_Y_2 - RECT_Y) - 1);
+      g.setColor(((isSelected) ? selectedBoxBorderColor : boxBorderColor));
+      if(!isSelected)
+         g.drawRect(0, 0, (RECT_X_2 - RECT_X) - 1, (RECT_Y_2 - RECT_Y) - 1);
+      else
+      {
+         Graphics2D g2d = (Graphics2D)g;
+         Stroke old = g2d.getStroke();
+         g2d.setStroke(new BasicStroke(4));
+         g2d.drawRect(2, 2, (RECT_X_2 - RECT_X) - 4, (RECT_Y_2 - RECT_Y) - 4);
+         g2d.setStroke(old);
+      }
    }
 
    @Override

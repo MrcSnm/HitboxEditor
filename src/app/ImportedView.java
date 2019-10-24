@@ -135,14 +135,14 @@ public class ImportedView extends JScrollPane
                     for(int i = 0, len = imHitboxes.size(); i < len; i++)
                     {
                         Box hitbox = im.addHitbox();
-                        imHitboxes.get(i).copyInto(hitbox);
+                        imHitboxes.get(i).loadCopyInto(hitbox);
                     }
     
                     List<Box> imHurtboxes = ref.scheduledHurtboxes.get(0);
                     for(int i = 0, len = imHurtboxes.size(); i < len; i++)
                     {
                         Box hurtbox = im.addHurtbox();
-                        imHurtboxes.get(i).copyInto(hurtbox);
+                        imHurtboxes.get(i).loadCopyInto(hurtbox);
                     }
                     im.setAnchor(scheduledPivotX.get(0).get(), scheduledPivotY.get(0).get());
                     ref.scheduledHurtboxes.remove(0);

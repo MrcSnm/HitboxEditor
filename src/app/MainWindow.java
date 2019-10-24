@@ -24,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import app.Animation.AnimationMenu;
 import app.Animation.AnimationViewer;
 import app.base.FilterableOptionsView;
+import app.base.Inspector;
 import app.file.Loader;
 import app.file.Saver;
 import app.global.Globals;
@@ -202,6 +203,8 @@ public class MainWindow extends JFrame
 									});
 									
 											JButton btnPointer = new JButton("Pointer");
+
+											Inspector inspector = new Inspector();
 											GroupLayout gl_buttonContainer = new GroupLayout(buttonContainer);
 											gl_buttonContainer.setAutoCreateContainerGaps(true);
 											gl_buttonContainer.setHonorsVisibility(false);
@@ -228,6 +231,7 @@ public class MainWindow extends JFrame
 														.addComponent(btnPointer, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
 											);
 											buttonContainer.setLayout(gl_buttonContainer);
+
 											btnPointer.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent e) 
 												{
@@ -235,12 +239,13 @@ public class MainWindow extends JFrame
 												}
 											});
             												
+			contentPane.add(inspector);
             
             JPanel panel = new JPanel();
             contentPane.add(panel);
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             
-            		final Editor editor = new Editor();
+            		final Editor editor = new Editor(inspector);
             		panel.add(editor);
             		//editor.panel.setBorder(null);
             		//editor.panel.setBa
@@ -263,8 +268,9 @@ public class MainWindow extends JFrame
 		{
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				Saver.saveProject(scrollPane);
+			public void actionPerformed(ActionEvent e) 
+			{
+				Saver.saveProject(scrollPane, editor);
 			}
 		});
 

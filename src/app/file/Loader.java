@@ -130,10 +130,11 @@ public class Loader
                 {
                     e.printStackTrace();
                 }
-                x = Integer.parseInt(returned[1].split("\\D")[0]);
-                y = Integer.parseInt(returned[2].split("\\D")[0]);
-                w = Integer.parseInt(returned[3].split("\\D")[0]);
-                h = Integer.parseInt(returned[4].split("\\D")[0]);
+                //Removed values -> ',' '},' '}'
+                x = Integer.parseInt(returned[1].split("(,}?|},?)")[0]);
+                y = Integer.parseInt(returned[2].split("(,}?|},?)")[0]);
+                w = Integer.parseInt(returned[3].split("(,}?|},?)")[0]);
+                h = Integer.parseInt(returned[4].split("(,}?|},?)")[0]);
                 currentBox.RECT_X = x;
                 currentBox.RECT_X_2 = x + w;
                 currentBox.RECT_Y = y;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.Box;
+import app.Editor;
 import app.CrossPlatformFunctions;
 import app.ImageComponent;
 import app.ImportedView;
@@ -17,7 +18,7 @@ public class Saver
     {
 
     }
-    public static void saveProject(ImportedView view)
+    public static void saveProject(ImportedView view, Editor editor)
     {
         ImageComponent buffer;
         String saveString = "{\n\t" + addProp("projectName", projectName) + ",\n";
@@ -32,8 +33,8 @@ public class Saver
             saveString+= "\"" + buffer.imgName + "\" : " + "\n\t{\n";
             saveString+= "\t\t" + "\"absolutePath\" : \"" + path + "\",\n";
             saveString+= "\t\t" + "\"pivot\" : {\"x\" : " + (float)buffer.anchor.x + ", \"y\" : " + (float)buffer.anchor.y + "},\n";
-            saveString+= "\t\t" + addBox("hitboxes", buffer.hitboxes) + ",\n";
-            saveString+= "\t\t" + addBox("hurtboxes", buffer.hurtboxes);
+            saveString+= "\t\t" + addBox("hitboxes", buffer.hitboxes, editor) + ",\n";
+            saveString+= "\t\t" + addBox("hurtboxes", buffer.hurtboxes, editor);
             saveString+="\n\t},\n";
         }
         saveString = saveString.substring(0, saveString.length() - 2);
@@ -42,7 +43,7 @@ public class Saver
         save(saveString);
     }
 
-    private static String addBox(String propName, List<Box> value)
+    private static String addBox(String propName, List<Box> value, Editor editor)
     {
         String boxes ="\"" + propName + "\" : \n\t\t[";
         boolean hasComma = false;
@@ -50,7 +51,14 @@ public class Saver
         {
             hasComma = true;
             boxes+= "\n\t\t\t{";
-            boxes+= addProp("x", b.RECT_X) + ", " + addProp("y", b.RECT_Y) + ", " + addProp("width", b.RECT_X_2 - b.RECT_X) + ", " + addProp("height", b.RECT_Y_2 - b.RECT_Y) + "},";
+            if(!b.canSave())
+            {
+                b.toggleNormallize(editor);
+                boxes+= addProp("x", b.RECT_X) + ", " + addProp("y", b.RECT_Y) + ", " + addProp("width", b.RECT_X_2 - b.RECT_X) + ", " + addProp("height", b.RECT_Y_2 - b.RECT_Y) + "},";
+                b.toggleNormallize(editor);
+            }
+            else
+                boxes+= addProp("x", b.RECT_X) + ", " + addProp("y", b.RECT_Y) + ", " + addProp("width", b.RECT_X_2 - b.RECT_X) + ", " + addProp("height", b.RECT_Y_2 - b.RECT_Y) + "},";
         }
         if(hasComma)
             boxes = boxes.substring(0, boxes.length() - 1);

@@ -135,6 +135,10 @@ public class ImageComponent extends JLabel
         Box hitbox = new Box(this.hitboxes, this);
         hitbox.boxBorderColor = new Color(255,0, 0, 160);
         hitbox.boxFillColor = new Color(200, 0, 0, 100);
+
+        hitbox.selectedBoxBorderColor = new Color(255, 255, 0, 160);
+        hitbox.selectedBoxFillColor = new Color(200, 0, 0, 100);
+
         this.hitboxes.add(hitbox);
         return hitbox;
     }
@@ -144,8 +148,26 @@ public class ImageComponent extends JLabel
         Box hurtbox = new Box(this.hurtboxes, this);
         hurtbox.boxBorderColor = new Color(0, 255, 0, 160);
         hurtbox.boxFillColor = new Color(0, 200, 0, 100);
+
+        hurtbox.selectedBoxBorderColor = new Color(255, 255, 0, 160);
+        hurtbox.selectedBoxFillColor = new Color(100, 200, 100, 100);
+
         this.hurtboxes.add(hurtbox);
         return hurtbox;
+    }
+
+    public Box getBox(int x, int y)
+    {
+        List<Box> boxes = new ArrayList<Box>();
+        boxes.addAll(hurtboxes);
+        boxes.addAll(hitboxes);
+        for(int i = 0, len = boxes.size(); i < len; i++)
+        {
+            Box b = boxes.get(i);
+            if(b.pointIntersection(x, y))
+                return b;
+        }
+        return null;
     }
 
     public void setAnchor(float x, float y)
