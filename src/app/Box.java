@@ -119,6 +119,10 @@ public class Box extends JComponent implements InspectorTarget
 
       inspector.addTargetSetter("HEIGHT", new Callback<Object>(new Integer(5))
       {
+         public Integer castFunction()
+         {
+            return new Integer(0);
+         }
          public Void call()
          {
             b.RECT_Y_2 = (int)this.value;
@@ -127,6 +131,13 @@ public class Box extends JComponent implements InspectorTarget
       });
    }
    
+   public void postSetOperation()
+   {
+      setDefaultBounds();
+      revalidate();
+      repaint();
+   }
+
    public String getTargetName()
    {
       return "Box";

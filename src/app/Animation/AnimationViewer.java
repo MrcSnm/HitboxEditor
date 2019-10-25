@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import app.base.ConcurrentUpdate;
 import app.base.FilterableOptionsView;
 
 public class AnimationViewer extends JPanel 
@@ -36,6 +37,8 @@ public class AnimationViewer extends JPanel
     private static String scheduledName = "";
     private static List<BufferedImage> scheduledBufferedImages = new ArrayList<BufferedImage>();
 
+    public ConcurrentUpdate updater;
+
     private AnimationViewer() 
     {
         super(true);
@@ -44,37 +47,18 @@ public class AnimationViewer extends JPanel
         currentImageName.setForeground(Color.WHITE);
         add(currentImageName);
 
-        Thread t = new Thread(new Runnable() 
+        updater = new ConcurrentUpdate()
         {
             @Override
-            public void run() 
+            public void update(double deltaTime)
             {
-                while (true) 
-                {
-                    if(!IS_STOPPED)
-                    {
-                        long startTime = System.nanoTime();
-                        if (canUpdate())
-                            updateFrame();
-                        if (scheduledUpdate)
-                            setAnimationFrames(scheduledBufferedImages, scheduledName);
-                        long endTime = System.nanoTime() - startTime;
-                        double miliDt = (double) endTime / 1000000;
-                        if (miliDt < 16.6)
-                        {
-                            try {Thread.sleep((long) (16.6 - miliDt));}
-                            catch (InterruptedException e) {e.printStackTrace();}
-                        }
-                    }
-                    else
-                    {
-                        try {Thread.sleep((long) (300));}
-                        catch (InterruptedException e) {e.printStackTrace();}
-                    }
-                }
+                if (canUpdate())
+                    updateFrame();
+                if (scheduledUpdate)
+                    setAnimationFrames(scheduledBufferedImages, scheduledName);
             }
-        });
-        t.start();
+        };
+        updater.start();
     }
 
     public static void stopAnimation()
@@ -82,6 +66,7 @@ public class AnimationViewer extends JPanel
         if(instance == null)
             return;
         IS_STOPPED = true;
+        instance.updater.setUpdating(true);
         instance.frameCounter = 0;
     }
 
@@ -90,6 +75,7 @@ public class AnimationViewer extends JPanel
         if(instance == null)
             return;
         IS_STOPPED = false;
+        instance.updater.setUpdating(false);
         instance.frameCounter = 0;
     }
 

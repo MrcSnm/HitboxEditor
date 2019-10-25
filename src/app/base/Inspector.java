@@ -2,8 +2,9 @@ package app.base;
 
 import java.awt.Component;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -14,35 +15,109 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import app.global.Callback;
 
-public class Inspector extends JPanel
-{
+public class Inspector extends JPanel {
     JLabel title;
     JScrollPane scrollPane;
     JTable inspector;
     JButton removeButton;
+    InspectorTarget currentTarget;
     private Map<String, Callable<String>> valuesGetter;
     private Map<String, Callback<Object>> valuesSetter;
-    
-    public Inspector()
+    ConcurrentUpdate valueChecker;
+
+    String lastValue = null;
+    String valueBeforeEdit = null;
+
+    public Inspector() 
     {
         super(true);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setAlignmentX(Component.CENTER_ALIGNMENT);
-        inspector = new JTable(new DefaultTableModel(new Object[]{"Parameter", "Value"}, 0)
-        {
+        inspector = new JTable(new DefaultTableModel(new Object[] { "Parameter", "Value" }, 0) {
+
             @Override
-            public boolean isCellEditable(int row, int col)
-            {
+            public boolean isCellEditable(int row, int col) {
                 return col == 1;
             }
         });
+
+        inspector.getModel().addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                System.out.println("Mudado");
+            }
+        });
+
+        valueChecker = new ConcurrentUpdate(30) {
+
+            @Override
+            public void update(double deltaTime) 
+            {
+                JTextField field = (JTextField)inspector.getEditorComponent();
+                Document dom = field.getDocument();
+                String val = "";
+                try {val = dom.getText(0, dom.getLength());}
+                catch (BadLocationException e) {e.printStackTrace();}
+
+                updateValue(val);
+                
+                //System.out.println(inspector.getValueAt(row, 1));
+            }
+        };
+        valueChecker.start();
+        valueChecker.setUpdating(false);
+
+        inspector.addPropertyChangeListener(new PropertyChangeListener()
+        {
+            @Override
+            public void propertyChange(PropertyChangeEvent e)
+            {
+                //  A cell has started/stopped editing
+
+                if ("tableCellEditor".equals(e.getPropertyName()))
+                {
+                    if (inspector.isEditing())
+                    {
+                        valueBeforeEdit = (String)inspector.getValueAt(inspector.getSelectedRow(), 1);
+                        valueChecker.setUpdating(true);
+                    }
+                    else
+                        valueChecker.setUpdating(false);
+                }
+            }
+        });
+
+        
+        /*inspector.getCellEditor().addCellEditorListener(new CellEditorListener() {
+
+            @Override
+            public void editingStopped(ChangeEvent e) 
+            {
+                System.out.println("Stopped ");
+            }
+
+            @Override
+            public void editingCanceled(ChangeEvent e) 
+            {
+                System.out.println("Cancelled ");
+
+            }
+            
+        });*/
+
 
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setAlignmentX(JLabel.CENTER);
@@ -63,10 +138,32 @@ public class Inspector extends JPanel
         add(title);
         add(scrollPane);
         add(removeButton);
-        
 
-        
+    }
 
+    private void updateValue(String newValue)
+    {
+        if(lastValue == null)
+            lastValue = newValue;
+        else if(lastValue.equals(newValue))
+            return;
+        else
+            lastValue = newValue;
+        setCurrentValue();
+        System.out.println(newValue);
+        //valuesSetter.get(key)
+    }
+
+    private void setCurrentValue()
+    {
+        int row = inspector.getSelectedRow();
+        String val = (String)inspector.getValueAt(row, 0);
+        if(val != null)
+        {
+            valuesSetter.get(val).value = new Integer(lastValue);
+            valuesSetter.get(val).call();
+            currentTarget.postSetOperation();
+        }
     }
 
     public void setName(String name)
@@ -96,6 +193,7 @@ public class Inspector extends JPanel
         }
     }
 
+
     private void checkSetImplemented()
     {
         boolean canContinue = false;
@@ -118,6 +216,7 @@ public class Inspector extends JPanel
     public void setTarget(InspectorTarget target)
     {
         ((DefaultTableModel)inspector.getModel()).setRowCount(0);
+        currentTarget = target;
         target.onTargeted(this);
         target.onTargetedSetters(this);
         setName(target.getTargetName());
