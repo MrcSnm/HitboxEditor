@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,9 +24,11 @@ import javax.swing.event.TableModelListener;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import app.global.AbstractSetter;
 import app.global.Callback;
 
 public class Inspector extends JPanel {
@@ -34,11 +38,13 @@ public class Inspector extends JPanel {
     JButton removeButton;
     InspectorTarget currentTarget;
     private Map<String, Callable<String>> valuesGetter;
-    private Map<String, Callback<Object>> valuesSetter;
+    private Map<String, AbstractSetter> valuesSetter;
     ConcurrentUpdate valueChecker;
 
     String lastValue = null;
     String valueBeforeEdit = null;
+    int lastColumn = 0;
+    int lastRow = 0;
 
     public Inspector() 
     {
@@ -92,6 +98,7 @@ public class Inspector extends JPanel {
                     if (inspector.isEditing())
                     {
                         valueBeforeEdit = (String)inspector.getValueAt(inspector.getSelectedRow(), 1);
+                        System.out.println("Value before edit: " + valueBeforeEdit);
                         valueChecker.setUpdating(true);
                     }
                     else
@@ -99,25 +106,27 @@ public class Inspector extends JPanel {
                 }
             }
         });
-
+        inspector.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
+        inspector.getColumnModel().getColumn(1).getCellEditor().addCellEditorListener(new CellEditorListener(){
         
-        /*inspector.getCellEditor().addCellEditorListener(new CellEditorListener() {
-
             @Override
             public void editingStopped(ChangeEvent e) 
             {
-                System.out.println("Stopped ");
+                editingCanceled(e);
+                System.out.println("Stopped");
             }
-
+        
             @Override
             public void editingCanceled(ChangeEvent e) 
             {
-                System.out.println("Cancelled ");
-
+                recoverLastValue();
+                
+                System.out.println("Cancelled");
+                // TODO Auto-generated method stub
             }
-            
-        });*/
+        });
 
+        System.out.println(inspector.getColumnModel().getColumn(1).getCellEditor());
 
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setAlignmentX(JLabel.CENTER);
@@ -125,7 +134,7 @@ public class Inspector extends JPanel {
 
         scrollPane = new JScrollPane(inspector);
         valuesGetter = new HashMap<String, Callable<String>>();
-        valuesSetter = new HashMap<String, Callback<Object>>();
+        valuesSetter = new HashMap<String, AbstractSetter>();
         removeButton = new JButton("Remove");
 
         title = new JLabel("Select target to inspect");
@@ -149,21 +158,36 @@ public class Inspector extends JPanel {
             return;
         else
             lastValue = newValue;
-        setCurrentValue();
+        try{setCurrentValue();}
+        catch(BadLocationException e){e.printStackTrace();}
         System.out.println(newValue);
         //valuesSetter.get(key)
     }
 
-    private void setCurrentValue()
+    private void setCurrentValue() throws BadLocationException
     {
         int row = inspector.getSelectedRow();
         String val = (String)inspector.getValueAt(row, 0);
         if(val != null)
         {
-            valuesSetter.get(val).value = new Integer(lastValue);
-            valuesSetter.get(val).call();
+            JTextField field = (JTextField)inspector.getEditorComponent();
+            Document dom = field.getDocument();
+            String currentStr = valuesSetter.get(val).setValue(lastValue);
+            if(!dom.getText(0, dom.getLength()).equals(currentStr))
+            {
+                dom.remove(0, dom.getLength());
+                dom.insertString(0, currentStr, null);
+            }
             currentTarget.postSetOperation();
         }
+    }
+
+    private void recoverLastValue()
+    {
+        inspector.editCellAt(lastRow, lastColumn);
+        ((DefaultTableModel)inspector.getModel()).setValueAt(valueBeforeEdit, lastRow, lastColumn);
+        updateValue(valueBeforeEdit);
+        
     }
 
     public void setName(String name)
@@ -177,10 +201,10 @@ public class Inspector extends JPanel {
         valuesGetter.put(valueName, valueGetter);
     }
 
-    public void addTargetSetter(String valueName, Callback<Object> valueGetter)
+    public void addTargetSetter(String valueName, AbstractSetter valueSetter)
     {
         //DefaultTableModel tb = (DefaultTableModel)inspector.getModel();
-        valuesSetter.put(valueName, valueGetter);
+        valuesSetter.put(valueName, valueSetter);
     }
 
     public void restartTable() throws Exception
@@ -200,7 +224,7 @@ public class Inspector extends JPanel {
         for(Map.Entry<String, Callable<String>> getters : valuesGetter.entrySet())
         {
             canContinue = false;
-            for(Map.Entry<String, Callback<Object>> setters : valuesSetter.entrySet())
+            for(Map.Entry<String, AbstractSetter> setters : valuesSetter.entrySet())
             {
                 if(setters.getKey().equals(getters.getKey()))
                     canContinue = true;
@@ -215,6 +239,10 @@ public class Inspector extends JPanel {
 
     public void setTarget(InspectorTarget target)
     {
+        if(inspector.isEditing())
+        {
+            inspector.getCellEditor().cancelCellEditing();
+        }
         ((DefaultTableModel)inspector.getModel()).setRowCount(0);
         currentTarget = target;
         target.onTargeted(this);

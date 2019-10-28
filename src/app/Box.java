@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 
 import app.base.Inspector;
 import app.base.InspectorTarget;
+import app.global.AbstractSetter;
 import app.global.Callback;;
 
 public class Box extends JComponent implements InspectorTarget
@@ -90,43 +91,45 @@ public class Box extends JComponent implements InspectorTarget
    public void onTargetedSetters(Inspector inspector)
    {
       Box b = this;
-      inspector.addTargetSetter("X", new Callback<Object>(new Integer(5))
+      inspector.addTargetSetter("X", new AbstractSetter()
       {
-         public Void call()
+         public String setValue(String value)
          {
-            b.RECT_X = (int)this.value;
-            return null;
+            int val = getInt(value);
+            b.RECT_X_2 = val + (b.RECT_X_2 - b.RECT_X);
+            b.RECT_X = val;
+            return String.valueOf(val);
          }
       });
 
-      inspector.addTargetSetter("Y", new Callback<Object>(new Integer(5))
+      inspector.addTargetSetter("Y", new AbstractSetter()
       {
-         public Void call()
+         public String setValue(String value)
          {
-            b.RECT_Y = (int)this.value;
-            return null;
+            int val = getInt(value);
+            b.RECT_Y_2 = val + (b.RECT_Y_2 - b.RECT_Y);
+            b.RECT_Y = val;
+            return String.valueOf(val);
          }
       });
 
-      inspector.addTargetSetter("WIDTH", new Callback<Object>(new Integer(5))
+      inspector.addTargetSetter("WIDTH", new AbstractSetter()
       {
-         public Void call()
+         public String setValue(String value)
          {
-            b.RECT_X_2 = (int)this.value;
-            return null;
+            int val = getInt(value);
+            b.RECT_X_2 = b.RECT_X + val;
+            return String.valueOf(val);
          }
       });
 
-      inspector.addTargetSetter("HEIGHT", new Callback<Object>(new Integer(5))
+      inspector.addTargetSetter("HEIGHT", new AbstractSetter()
       {
-         public Integer castFunction()
+         public String setValue(String value)
          {
-            return new Integer(0);
-         }
-         public Void call()
-         {
-            b.RECT_Y_2 = (int)this.value;
-            return null;
+            int val = getInt(value);
+            b.RECT_Y_2 = b.RECT_Y + val;
+            return String.valueOf(val);
          }
       });
    }
