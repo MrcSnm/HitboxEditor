@@ -114,12 +114,9 @@ public class AnimationViewer extends JPanel
     {
         if(IS_STOPPED)
         {
-            instance.changeFrame(frameNumber);
             instance.currentFrame = frameNumber;
-            instance.revalidate();
-            instance.repaint();
+            instance.nextImage();
         }
-        System.out.println("Change: " + frameNumber);
     }
 
     private void nextImage()

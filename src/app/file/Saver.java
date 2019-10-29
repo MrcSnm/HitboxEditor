@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import app.Box;
 import app.Editor;
 import app.CrossPlatformFunctions;
@@ -14,12 +16,46 @@ import app.MainWindow;
 public class Saver
 {
     public static String projectName;
+    public static boolean isSaved = true;
+
     private Saver()
     {
 
     }
+    public static void setUnsaved()
+    {
+        MainWindow.setEditorTitle(true);
+        isSaved = false;
+    }
+
+    public static void saveExit(ImportedView view, Editor editor)
+    {
+        if(isSaved)
+            System.exit(0);
+        int opt = JOptionPane.showOptionDialog
+        (
+            null, "File is not saved, do you want to save?", "Save file", JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null, null, null
+        );
+        switch(opt)
+        {
+            case JOptionPane.YES_OPTION:
+                saveProject(view, editor);
+                System.exit(0);
+            case JOptionPane.NO_OPTION:
+                System.exit(0);
+            case JOptionPane.CANCEL_OPTION:
+                break;
+            default:
+                break;
+        }
+    }
+
     public static void saveProject(ImportedView view, Editor editor)
     {
+        if(isSaved)
+            return;
         ImageComponent buffer;
         String saveString = "{\n\t" + addProp("projectName", projectName) + ",\n";
         boolean hasNext = false;
@@ -41,6 +77,7 @@ public class Saver
 
         saveString+= "\n}";
         save(saveString);
+        isSaved = true;
     }
 
     private static String addBox(String propName, List<Box> value, Editor editor)
@@ -100,5 +137,6 @@ public class Saver
         {
             e.printStackTrace();
         }
+        MainWindow.setEditorTitle(false);
     }
 }

@@ -40,7 +40,6 @@ public class UIDefaults
     {
     	UIManager.put("activeCaption", Color.BLACK);
     	
-    	
     }
 
     private static void setOptionPaneDefault()

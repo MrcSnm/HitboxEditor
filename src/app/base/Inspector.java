@@ -28,6 +28,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import app.file.Saver;
 import app.global.AbstractSetter;
 import app.global.Callback;
 
@@ -122,7 +123,6 @@ public class Inspector extends JPanel
             @Override
             public void editingStopped(ChangeEvent e) 
             {
-                System.out.println("Stopped");
             }
         
             @Override

@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,6 +21,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import app.Animation.AnimationMenu;
@@ -36,29 +39,21 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.Toolkit;
 
-public class MainWindow extends JFrame 
-{
-    public static MainWindow mainRef;
-    public static String scheduledProject = "";
-
+public class MainWindow extends JFrame {
+	public static MainWindow mainRef;
+	public static String scheduledProject = "";
 
 	public static String PROJECT_PATH = null;
-	public static enum MODE
-    {
-        POINTER,
-        ANCHOR,
-        HITBOX,
-        HURTBOX 
-    }
 
+	public static enum MODE {
+		POINTER, ANCHOR, HITBOX, HURTBOX
+	}
 
-    public static void handleError()
-    {
+	public static void handleError() {
 
 	}
 
-    public static MODE currentMode = MODE.POINTER;
-
+	public static MODE currentMode = MODE.POINTER;
 
 	private JPanel contentPane;
 
@@ -67,32 +62,25 @@ public class MainWindow extends JFrame
 	 */
 	public static void main(String[] args) 
 	{
-        if(args.length > 0)
-        {
-            if(!args[0].equals("") && Files.exists(Paths.get(args[0])))
-                scheduledProject = Paths.get(args[0]).toString();
-        }
-		SwingUtilities.invokeLater(new Runnable()
-		{
+		if (args.length > 0) {
+			if (!args[0].equals("") && Files.exists(Paths.get(args[0])))
+				scheduledProject = Paths.get(args[0]).toString();
+		}
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				UIDefaults.setUIDefaults();
 			}
 		});
 		EventQueue.invokeLater(new Runnable() {
-			public void run() 
-			{
-				try 
-				{
+			public void run() {
+				try {
 					MainWindow frame = new MainWindow();
-					MainWindow.mainRef = frame;
-			        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			        frame.getContentPane().setBackground(Color.BLACK);
-			        frame.getContentPane().setForeground(UIDefaults.DARKER_GRAY);
+					frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+					frame.getContentPane().setBackground(Color.BLACK);
+					frame.getContentPane().setForeground(UIDefaults.DARKER_GRAY);
 					frame.setVisible(true);
-				} catch (Exception e) 
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -104,14 +92,14 @@ public class MainWindow extends JFrame
 	 */
 	public MainWindow() 
 	{
+		MainWindow.mainRef = this;
 		setBackground(Color.BLACK);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/app/icon.png")));
 
 		setForeground(Color.BLACK);
-		setTitle("HitboxEditor by Hipreme");		
 
 		final MainWindow window = this;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		setBounds(100, 100, 948, 597);
 
 		JMenuBar menuBar = new JMenuBar();
@@ -283,6 +271,72 @@ public class MainWindow extends JFrame
 			}
 		});
 
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) 
+			{
+				Saver.saveExit(scrollPane, editor);
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		setEditorTitle(false);
+
+	}
+
+	private static void setCurrentTitle(String title, boolean isUnsaved)
+	{
+		if(MainWindow.mainRef != null)
+		{
+			if(title == null || title.equals(""))
+				MainWindow.mainRef.setTitle("HitboxEditor by Hipreme - New Project");
+			else
+				MainWindow.mainRef.setTitle("HitboxEditor by Hipreme - " + title);
+			if(isUnsaved)
+				MainWindow.mainRef.setTitle("*" + MainWindow.mainRef.getTitle());
+			MainWindow.mainRef.revalidate();
+			MainWindow.mainRef.repaint();
+		}
+	}
+	public static void setEditorTitle(boolean useUnsavedName)
+	{
+		MainWindow.setCurrentTitle(MainWindow.PROJECT_PATH, useUnsavedName);
 	}
 
     public void drawOptions()

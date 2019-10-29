@@ -55,6 +55,7 @@ public class Loader
         importedView.images.clear();
         parse(lines, importedView);
         MainWindow.PROJECT_PATH = path;
+        MainWindow.setEditorTitle(false);
     }
 
     private static void parse(ArrayList<String> lines, ImportedView imported)
