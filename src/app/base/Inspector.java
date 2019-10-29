@@ -31,7 +31,10 @@ import javax.swing.text.Document;
 import app.global.AbstractSetter;
 import app.global.Callback;
 
-public class Inspector extends JPanel {
+public class Inspector extends JPanel 
+{
+    public boolean isUpdatingSetter = false;
+    
     JLabel title;
     JScrollPane scrollPane;
     JTable inspector;
@@ -67,24 +70,31 @@ public class Inspector extends JPanel {
             }
         });
 
-        valueChecker = new ConcurrentUpdate(30) {
+        valueChecker = new ConcurrentUpdate(30) 
+        {
 
             @Override
             public void update(double deltaTime) 
             {
-                JTextField field = (JTextField)inspector.getEditorComponent();
-                Document dom = field.getDocument();
-                String val = "";
-                try {val = dom.getText(0, dom.getLength());}
-                catch (BadLocationException e) {e.printStackTrace();}
-
-                updateValue(val);
+                if(isUpdatingSetter)
+                {
+                    JTextField field = (JTextField)inspector.getEditorComponent();
+                    Document dom = field.getDocument();
+                    String val = "";
+                    try {val = dom.getText(0, dom.getLength());}
+                    catch (BadLocationException e) {e.printStackTrace();}
+                    updateValue(val);
+                }
+                else
+                {
+                    try{updateEveryRow();}
+                    catch(Exception e){e.printStackTrace();}
+                }
                 
                 //System.out.println(inspector.getValueAt(row, 1));
             }
         };
         valueChecker.start();
-        valueChecker.setUpdating(false);
 
         inspector.addPropertyChangeListener(new PropertyChangeListener()
         {
@@ -99,10 +109,10 @@ public class Inspector extends JPanel {
                     {
                         valueBeforeEdit = (String)inspector.getValueAt(inspector.getSelectedRow(), 1);
                         System.out.println("Value before edit: " + valueBeforeEdit);
-                        valueChecker.setUpdating(true);
+                        isUpdatingSetter = true;
                     }
                     else
-                        valueChecker.setUpdating(false);
+                        isUpdatingSetter = false;
                 }
             }
         });
@@ -112,7 +122,6 @@ public class Inspector extends JPanel {
             @Override
             public void editingStopped(ChangeEvent e) 
             {
-                editingCanceled(e);
                 System.out.println("Stopped");
             }
         
@@ -120,7 +129,6 @@ public class Inspector extends JPanel {
             public void editingCanceled(ChangeEvent e) 
             {
                 recoverLastValue();
-                
                 System.out.println("Cancelled");
                 // TODO Auto-generated method stub
             }
@@ -217,6 +225,29 @@ public class Inspector extends JPanel {
         }
     }
 
+    public int getRowFromGetter(String getterKey)
+    {
+        for(int i = 0, len = valuesGetter.size(); i < len; i++)
+        {
+            if(inspector.getValueAt(i, 0).toString().equals(getterKey))
+                return i;
+        }
+        System.err.println("Could not get row for the key '" + getterKey + "' for the current inspected target");
+        return -1;
+    }
+
+    public void updateEveryRow() throws Exception
+    {
+        if(currentTarget != null)
+            for(int i = 0, len = inspector.getRowCount(); i < len; i++)
+            {
+                Object propertyName = inspector.getValueAt(i, 0);
+                Object propertyValue = inspector.getValueAt(i, 1);
+                String newValue = valuesGetter.get(propertyName).call();
+                if(propertyValue != null && newValue != null && !propertyValue.equals(newValue))
+                    inspector.setValueAt(valuesGetter.get(propertyName).call(), i, 1);
+            }
+    }
 
     private void checkSetImplemented()
     {

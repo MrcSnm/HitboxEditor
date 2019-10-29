@@ -66,8 +66,7 @@ public class AnimationViewer extends JPanel
         if(instance == null)
             return;
         IS_STOPPED = true;
-        instance.updater.setUpdating(true);
-        instance.frameCounter = 0;
+        instance.updater.setUpdating(false);
     }
 
     public static void playAnimation()
@@ -75,8 +74,7 @@ public class AnimationViewer extends JPanel
         if(instance == null)
             return;
         IS_STOPPED = false;
-        instance.updater.setUpdating(false);
-        instance.frameCounter = 0;
+        instance.updater.setUpdating(true);
     }
 
     public static void loopAnimation()
@@ -115,9 +113,13 @@ public class AnimationViewer extends JPanel
     public static void globalChangeFrame(int frameNumber)
     {
         if(IS_STOPPED)
+        {
             instance.changeFrame(frameNumber);
-        instance.currentFrame = frameNumber;
-        System.out.println("Change");
+            instance.currentFrame = frameNumber;
+            instance.revalidate();
+            instance.repaint();
+        }
+        System.out.println("Change: " + frameNumber);
     }
 
     private void nextImage()

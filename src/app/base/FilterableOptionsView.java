@@ -19,6 +19,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -63,12 +64,15 @@ public class FilterableOptionsView
                 return false;
             }
         });
+
         Globals.addKeyListener(tab, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0).toString(), "hideEscape", new AbstractAction()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 dialog.setVisible(false);
+                if(AnimationViewer.instance != null)
+                    AnimationViewer.instance.updater.setUpdating(false);
             }
         });
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -82,10 +86,13 @@ public class FilterableOptionsView
             @Override
             public void valueChanged(ListSelectionEvent e) 
             {
-                //if(tab.getSelectedRow() != -1)
-                  //  AnimationViewer.globalChangeFrame(tab.getSelectedRow());
+                if(tab.getSelectedRow() != -1)
+                {
+                    AnimationViewer.globalChangeFrame(tab.getSelectedRow());
+                }
             }
         });
+        tab.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         currentAnimNameHeader = new JTextField("Select an animation to start viewing");
         currentAnimNameHeader.setHorizontalAlignment(JTextField.CENTER);
@@ -155,7 +162,11 @@ public class FilterableOptionsView
             instance = new FilterableOptionsView(f);
         }
         else
+        {
+            if(AnimationViewer.instance != null)
+                AnimationViewer.instance.updater.setUpdating(true);
             instance.dialog.setVisible(true);
+        }
         AnimationItem item = AnimationMenu.getCurrentAnimation();
         if(item != null)
             setTableToAnimation(item);
@@ -163,7 +174,7 @@ public class FilterableOptionsView
 
     public static void setFrameSelected(int frameNumber)
     {
-        if(tab != null && tab.getSelectedRow() != frameNumber)
+        if(tab != null && tab.getRowCount() != 0 && tab.getSelectedRow() != frameNumber)
         {
             tab.clearSelection();
             tab.setRowSelectionInterval(frameNumber, frameNumber);
@@ -180,6 +191,8 @@ public class FilterableOptionsView
         dialog.add(splitPane);
         dialog.pack();
         dialog.setVisible(true);
+        if(AnimationViewer.instance != null)
+            AnimationViewer.instance.updater.setUpdating(true);
     }
 
     private static void addRow(String name)
@@ -197,7 +210,8 @@ public class FilterableOptionsView
             instance.currentAnimNameHeader.setText(item.animationName);
             for(ImageComponent ig : item.imgComponents)
             {
-                addRow(ig.imgName);
+                addRow(i + ":  " + ig.imgName);
+                i++; 
             }
         }
     }

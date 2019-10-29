@@ -104,7 +104,7 @@ public class Editor extends JScrollPane
                                 System.out.println("X: "+ normallizeX(e.getX()) + " Y: " + normallizeY(e.getY()));
 		                        //Anchor Set Position
 		                        break;
-                            case POINTER:
+                            case POINTER: 
                                 Box b = editingComponent.getBox(e.getX(), e.getY());
                                 if(b != null)
                                     setSelectedBox(b);
@@ -139,7 +139,7 @@ public class Editor extends JScrollPane
             							break;
             						}
             					}
-                                break;
+                                break;                                
         					default:
         						break;
             			}
@@ -197,6 +197,7 @@ public class Editor extends JScrollPane
                         editor.setAnchor(e.getX(), e.getY());
                         break;
                     case POINTER:
+                        moveSelectedBox(e.getX(), e.getY());
                         break;  
                 }
             }
@@ -297,6 +298,23 @@ public class Editor extends JScrollPane
             selectedBox.setSelected(false);
         selectedBox = b.setSelected(true);
         inspector.setTarget(b);
+    }
+
+    public void moveSelectedBox(int x, int y)
+    {
+        if(selectedBox != null)
+        {
+            Box b = selectedBox;
+            int lastX, lastY;
+            lastX = x - (b.RECT_X_2 - b.RECT_X) / 2;
+            lastY = y - (b.RECT_Y_2 - b.RECT_Y) / 2;
+            b.RECT_X_2 = lastX + (b.RECT_X_2 - b.RECT_X);
+            b.RECT_X = lastX;
+      
+            b.RECT_Y_2 = lastY + (b.RECT_Y_2 - b.RECT_Y);
+            b.RECT_Y = lastY;
+            b.postSetOperation();
+        }
     }
 
     public void saveEdited()
