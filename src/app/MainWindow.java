@@ -33,6 +33,8 @@ import app.file.Saver;
 import app.global.Globals;
 import app.global.KeyChecker;
 import app.global.UIDefaults;
+import app.global.command.CommandManager;
+
 import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.GroupLayout;
@@ -99,6 +101,7 @@ public class MainWindow extends JFrame {
 		setForeground(Color.BLACK);
 
 		final MainWindow window = this;
+
 		
 		setBounds(100, 100, 948, 597);
 
@@ -149,6 +152,8 @@ public class MainWindow extends JFrame {
 				menuBar.getMenu(0).doClick();
 			}
 		});
+		CommandManager.startCommandManager();
+		CommandManager.implantCommandKey(contentPane);
 
 		contentPane.setForeground(UIDefaults.DARKER_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

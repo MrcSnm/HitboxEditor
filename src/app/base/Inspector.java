@@ -276,10 +276,17 @@ public class Inspector extends JPanel
         }
         ((DefaultTableModel)inspector.getModel()).setRowCount(0);
         currentTarget = target;
-        target.onTargeted(this);
-        target.onTargetedSetters(this);
-        setName(target.getTargetName());
-        checkSetImplemented();
+        valuesGetter.clear();
+        valuesSetter.clear();
+        if(target != null)
+        {
+            target.onTargeted(this);
+            target.onTargetedSetters(this);
+            setName(target.getTargetName());   
+            checkSetImplemented();
+        }
+        else
+            setName("Select target to inspect");
         try{restartTable();}
         catch(Exception e){e.printStackTrace();}
     }

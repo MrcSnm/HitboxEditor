@@ -22,6 +22,12 @@ public class Saver
     {
 
     }
+
+    public static void setSaved()
+    {
+        MainWindow.setEditorTitle(false);
+        isSaved = true;
+    }
     public static void setUnsaved()
     {
         MainWindow.setEditorTitle(true);

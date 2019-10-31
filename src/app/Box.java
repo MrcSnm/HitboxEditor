@@ -35,6 +35,13 @@ public class Box extends JComponent implements InspectorTarget
    private List<Box> boxContainer;
    private JComponent boxParent;
 
+   public Box(){}
+
+   public boolean equals(Box b)
+   {
+      return (RECT_X == b.RECT_X && RECT_Y == b.RECT_Y && RECT_X_2 == b.RECT_X_2 && RECT_Y_2 == b.RECT_Y_2);
+   }
+
    public Box(int x, int y, int X_2, int Y_2)
    {
        RECT_X = x;
@@ -258,7 +265,7 @@ public class Box extends JComponent implements InspectorTarget
       b.RECT_X_2 = this.RECT_X_2;
       b.RECT_Y = this.RECT_Y;
       b.RECT_Y_2 = this.RECT_Y_2;
-      setDefaultBounds();
+      b.setDefaultBounds();
    }
 
    /**
